@@ -1836,6 +1836,27 @@ function init() {
             sidebar.classList.remove('open');
             overlay.classList.remove('visible');
         }
+
+        // When opening Settings, auto-open Management accordion + show first section with delay
+        if (pageKey === 'settings') {
+            var accordion = document.querySelector('.nav-accordion');
+            if (accordion) {
+                // First close accordion if open, then animate it open after a brief delay
+                accordion.classList.remove('open');
+
+                setTimeout(function () {
+                    accordion.classList.add('open');
+
+                    // After accordion animates open, activate first sub-item
+                    setTimeout(function () {
+                        var firstSubLink = accordion.querySelector('.nav-sub-link');
+                        if (firstSubLink) {
+                            performSettingsNav(firstSubLink);
+                        }
+                    }, 250);
+                }, 300);
+            }
+        }
     }
 
     var sidebarItems = document.querySelectorAll('.sidebar-item[data-page]');
@@ -1966,11 +1987,9 @@ function init() {
                     if (slipDirty) {
                         showUnsavedModal(function () {
                             performSettingsNav(self);
-                            highlightSection(self.getAttribute('data-section'));
                         }, 'salarySlip');
                     } else {
                         performSettingsNav(firstSubLink);
-                        highlightSection(firstSubLink.getAttribute('data-section'));
                     }
                 }
             }
@@ -3128,13 +3147,140 @@ function init() {
     // -- Unified Management Save/Cancel --
     var mgmtSaveBtn = document.getElementById('mgmtSaveBtn');
     var mgmtCancelBtn = document.getElementById('mgmtCancelBtn');
+    var saveConfirmModal = document.getElementById('saveConfirmModal');
+    var saveConfirmList = document.getElementById('saveConfirmList');
+    var saveConfirmOk = document.getElementById('saveConfirmOk');
+    var saveConfirmCancel = document.getElementById('saveConfirmCancel');
+    var saveConfirmClose = document.getElementById('saveConfirmClose');
+
+    // Build human-readable change summary
+    function buildChangeSummary() {
+        var items = [];
+
+        // Shifts changes
+        if (shiftsDirty) {
+            var current = advanceShiftToggle ? advanceShiftToggle.checked : false;
+            items.push({
+                section: 'Shifts & Time',
+                text: 'Advance Shift <strong>' + (current ? 'enabled' : 'disabled') + '</strong>'
+            });
+        }
+
+        // Attendance changes
+        if (attendanceDirty) {
+            var regOn = regToggle ? regToggle.checked : false;
+            if (regOn !== attendanceInitialToggle) {
+                items.push({
+                    section: 'Attendance',
+                    text: 'Regularization <strong>' + (regOn ? 'enabled' : 'disabled') + '</strong>'
+                });
+            }
+            if (regOn && regLimitInput) {
+                var newLimit = regLimitInput.value;
+                var oldLimit = attendanceInitialLimit;
+                if (newLimit !== oldLimit) {
+                    items.push({
+                        section: 'Attendance',
+                        text: 'Regularization limit changed to <strong>' + newLimit + '</strong>/month'
+                    });
+                }
+            }
+        }
+
+        // Hardware changes
+        if (hardwareDirty) {
+            var newTime = syncTimeInput ? syncTimeInput.value : '';
+            items.push({
+                section: 'Hardware',
+                text: 'Device sync time changed to <strong>' + newTime + '</strong>'
+            });
+        }
+
+        // Payroll changes
+        if (payrollDirty) {
+            var currentState = capturePayrollState();
+            for (var key in currentState) {
+                if (!currentState.hasOwnProperty(key) || !payrollInitialState.hasOwnProperty(key)) continue;
+                if (currentState[key] === payrollInitialState[key]) continue;
+
+                var el = document.getElementById(key);
+                if (!el) continue;
+
+                // Find a readable label
+                var label = '';
+                var card = el.closest('.mgmt-setting-card, .payroll-row, .pen-row, .ot-field');
+                if (card) {
+                    var lbl = card.querySelector('.mgmt-setting-title, .payroll-row-title, .pen-title, .ot-field-label');
+                    if (lbl) label = lbl.textContent.trim();
+                }
+                if (!label) {
+                    // Try parent label
+                    var parentLabel = el.closest('[class*="field"]');
+                    if (parentLabel) {
+                        var pLbl = parentLabel.querySelector('label');
+                        if (pLbl) label = pLbl.textContent.trim();
+                    }
+                }
+                if (!label) label = key;
+
+                var oldVal = payrollInitialState[key];
+                var newVal = currentState[key];
+
+                if (el.type === 'checkbox') {
+                    items.push({
+                        section: 'Payroll',
+                        text: label + ' <strong>' + (newVal === true || newVal === 'true' ? 'enabled' : 'disabled') + '</strong>'
+                    });
+                } else {
+                    items.push({
+                        section: 'Payroll',
+                        text: label + ' changed to <strong>' + newVal + '</strong>'
+                    });
+                }
+            }
+        }
+
+        return items;
+    }
+
+    function renderChangeSummary(items) {
+        if (!saveConfirmList) return;
+        if (items.length === 0) {
+            saveConfirmList.innerHTML = '<div class="save-confirm-empty">No changes detected</div>';
+            return;
+        }
+
+        var html = '';
+        var lastSection = '';
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].section !== lastSection) {
+                html += '<div class="save-confirm-section">' + items[i].section + '</div>';
+                lastSection = items[i].section;
+            }
+            html += '<div class="save-confirm-item">' +
+                '<div class="save-confirm-dot"></div>' +
+                '<div class="save-confirm-text">' + items[i].text + '</div>' +
+                '</div>';
+        }
+        saveConfirmList.innerHTML = html;
+    }
+
+    function showSaveConfirm() {
+        if (saveConfirmModal) saveConfirmModal.classList.add('visible');
+    }
+
+    function hideSaveConfirm() {
+        if (saveConfirmModal) saveConfirmModal.classList.remove('visible');
+    }
 
     function doManagementSave() {
-        // Validate attendance first — if it fails, scroll to error
+        // Validate attendance first
         if (attendanceDirty) {
-            var attResult = doAttendanceSave();
-            if (attResult === false) {
-                // Scroll to attendance section
+            if (regToggle && regToggle.checked && regLimitInput && !regLimitInput.value.trim()) {
+                regLimitInput.classList.add('input-error');
+                var regLimitErr = document.getElementById('regularizationLimitError');
+                if (regLimitErr) regLimitErr.classList.add('visible');
+                regLimitInput.focus();
                 var attEl = mgmtItemMap.attendance;
                 if (attEl && mgmtScrollContainer) {
                     mgmtScrollContainer.scrollTo({
@@ -3145,7 +3291,17 @@ function init() {
                 return;
             }
         }
+
+        // Build summary and show confirmation modal
+        var changes = buildChangeSummary();
+        renderChangeSummary(changes);
+        showSaveConfirm();
+    }
+
+    function confirmAndSave() {
+        hideSaveConfirm();
         if (shiftsDirty) doShiftsSave();
+        if (attendanceDirty) doAttendanceSave();
         if (hardwareDirty) doHardwareSave();
         if (payrollDirty) doPayrollSave();
 
@@ -3165,6 +3321,24 @@ function init() {
         mgmtSaveBtn.addEventListener('click', doManagementSave);
     }
 
+    if (saveConfirmOk) {
+        saveConfirmOk.addEventListener('click', confirmAndSave);
+    }
+
+    if (saveConfirmCancel) {
+        saveConfirmCancel.addEventListener('click', hideSaveConfirm);
+    }
+
+    if (saveConfirmClose) {
+        saveConfirmClose.addEventListener('click', hideSaveConfirm);
+    }
+
+    if (saveConfirmModal) {
+        saveConfirmModal.addEventListener('click', function (e) {
+            if (e.target === saveConfirmModal) hideSaveConfirm();
+        });
+    }
+
     if (mgmtCancelBtn) {
         mgmtCancelBtn.addEventListener('click', function () {
             resetAllManagement();
@@ -3176,7 +3350,22 @@ function init() {
         pendingNavAction = onComplete;
         pendingDirtySource = source || null;
         if (unsavedModalText) {
-            unsavedModalText.textContent = 'You have unsaved changes. Do you want to discard these changes and continue, or cancel to stay on the current tab?';
+            if (source === 'management') {
+                var changes = buildChangeSummary();
+                var summary = '';
+                for (var ci = 0; ci < changes.length; ci++) {
+                    // Strip HTML tags for plain text
+                    var plain = changes[ci].text.replace(/<[^>]+>/g, '');
+                    summary += '\n- ' + changes[ci].section + ': ' + plain;
+                }
+                unsavedModalText.textContent = 'You have unsaved changes:' + summary + '\n\nDiscard these changes and continue?';
+                unsavedModalText.style.whiteSpace = 'pre-line';
+                unsavedModalText.style.textAlign = 'left';
+            } else {
+                unsavedModalText.textContent = 'You have unsaved changes. Do you want to discard these changes and continue, or cancel to stay on the current tab?';
+                unsavedModalText.style.whiteSpace = '';
+                unsavedModalText.style.textAlign = '';
+            }
         }
         if (unsavedModal) unsavedModal.classList.add('visible');
     }

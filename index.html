@@ -519,7 +519,7 @@
             <div class="settings-nav">
                 <ul class="settings-nav-list">
                     <!-- Management Accordion -->
-                    <li class="settings-nav-item nav-accordion open">
+                    <li class="settings-nav-item nav-accordion">
                         <a href="#" class="settings-nav-link nav-accordion-toggle">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -597,7 +597,7 @@
                             <span>Configurations</span>
                         </a>
                     </li>
-                    <li class="settings-nav-item active">
+                    <li class="settings-nav-item">
                         <a href="#" class="settings-nav-link" data-section="salarySlip">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -1265,7 +1265,7 @@
                 </div>
 
                 <!-- Salary Slip Section -->
-                <div class="settings-section active" id="sectionSalarySlip">
+                <div class="settings-section" id="sectionSalarySlip">
                     <div class="salary-slip-layout">
                         <!-- LEFT: Company Details Form -->
                         <div class="salary-form-panel">
@@ -1531,6 +1531,32 @@
             <div class="unsaved-modal-actions">
                 <button class="unsaved-btn unsaved-btn-cancel" id="unsavedCancelBtn">Cancel</button>
                 <button class="unsaved-btn unsaved-btn-discard" id="unsavedDiscard">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Confirmation Modal -->
+    <div class="unsaved-modal-overlay" id="saveConfirmModal">
+        <div class="unsaved-modal save-confirm-modal">
+            <button class="unsaved-modal-close" id="saveConfirmClose" type="button">&times;</button>
+            <div class="unsaved-modal-icon" style="background:#e8f4fd">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2e86c1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+            </div>
+            <h3 class="unsaved-modal-title">Confirm Changes</h3>
+            <p class="save-confirm-subtitle">Review your changes before saving</p>
+            <div class="save-confirm-list" id="saveConfirmList">
+                <!-- JS will populate change items here -->
+            </div>
+            <div class="unsaved-modal-actions">
+                <button class="unsaved-btn unsaved-btn-cancel" id="saveConfirmCancel">Cancel</button>
+                <button class="unsaved-btn save-confirm-btn" id="saveConfirmOk">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Confirm Save
+                </button>
             </div>
         </div>
     </div>

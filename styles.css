@@ -4746,6 +4746,95 @@ body.logs-fullscreen .btn-fullscreen .fs-collapse-icon {
     background: #f0f2f5;
 }
 
+/* Save Confirmation Modal */
+.save-confirm-modal {
+    max-width: 420px;
+    text-align: left;
+}
+
+.save-confirm-subtitle {
+    font-size: 12.5px;
+    color: #7a8fa0;
+    margin: 2px 0 14px;
+    text-align: center;
+}
+
+.save-confirm-list {
+    max-height: 240px;
+    overflow-y: auto;
+    margin: 0 -8px;
+    padding: 0 8px;
+}
+
+.save-confirm-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #f6f8fa;
+    margin-bottom: 6px;
+}
+
+.save-confirm-item:last-child {
+    margin-bottom: 0;
+}
+
+.save-confirm-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2e86c1;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.save-confirm-text {
+    font-size: 12.5px;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+.save-confirm-text strong {
+    color: #1a5276;
+    font-weight: 600;
+}
+
+.save-confirm-section {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a7b5;
+    padding: 6px 0 4px;
+    margin-top: 4px;
+}
+
+.save-confirm-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.save-confirm-btn {
+    background: #2e86c1 !important;
+    color: #fff !important;
+    border: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.save-confirm-btn:hover {
+    background: #2475aa !important;
+}
+
+.save-confirm-empty {
+    text-align: center;
+    padding: 16px;
+    font-size: 12.5px;
+    color: #94a7b5;
+}
+
 /* Payroll Type Changed Modal */
 .payroll-type-modal {
     max-width: 480px;
