@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petpooja Payroll</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header" id="appHeader">
+        <div class="header-left">
+            <button class="hamburger-btn" id="hamburgerBtn" type="button">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="header-logo">
+                <svg class="logo-icon" width="36" height="36" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2e86c1"/>
+                    <circle cx="20" cy="14" r="5" fill="#fff"/>
+                    <path d="M10 30c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="#fff" opacity="0.85"/>
+                    <rect x="24" y="8" width="8" height="6" rx="1" fill="#fff" opacity="0.6"/>
+                    <line x1="26" y1="10" x2="30" y2="10" stroke="#2e86c1" stroke-width="1"/>
+                    <line x1="26" y1="12" x2="30" y2="12" stroke="#2e86c1" stroke-width="1"/>
+                </svg>
+                <div class="logo-text">
+                    <span class="logo-sub">PETPOJA</span>
+                    <span class="logo-main">PAYROLL</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="header-divider"></div>
+            <button class="org-selector" type="button">
+                All Organizations
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+        </div>
+        <div class="header-right">
+            <div class="header-divider"></div>
+            <button class="header-icon-btn notification-btn" type="button">
+                <span class="notification-dot"></span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </button>
+            <div class="header-user">
+                <div class="user-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <span class="user-name">Jinay Shah</span>
+                <svg class="user-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- App Sidebar -->
+    <nav class="app-sidebar" id="appSidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Employees</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                    <span>Manage Shifts</span>
+                    <span class="sidebar-badge">New</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path>
+                    </svg>
+                    <span>Leaves & Holidays</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <path d="M9 15l2 2 4-4"></path>
+                    </svg>
+                    <span>Approval Requests</span>
+                </a>
+            </li>
+            <li class="sidebar-divider"></li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    <span>Payroll</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>Loans & Advances</span>
+                </a>
+            </li>
+            <li class="sidebar-divider"></li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Reports</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>Dynamic Reports</span>
+                </a>
+            </li>
+            <li class="sidebar-item has-submenu">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>User Management</span>
+                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </li>
+            <li class="sidebar-divider"></li>
+            <li class="sidebar-item active" data-page="activityLogs">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                    <span>Activity Logs</span>
+                </a>
+            </li>
+            <li class="sidebar-item" data-page="settings">
+                <a href="#" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Setting</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="sidebar-contact">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>Call Us On: <a href="tel:07969223344" class="contact-link">07969223344</a></span>
+            </div>
+            <div class="sidebar-contact">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                <span>Contact on <a href="#" class="contact-link">Whatsapp</a>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="app-main">
+
+    <!-- ===== ACTIVITY LOGS PAGE ===== -->
+    <div class="page-section active" id="pageActivityLogs">
+    <div class="page-container">
+        <div class="card">
+            <!-- Header -->
+            <div class="card-header">
+                <h1 class="page-title">Activity Logs <span class="count" id="totalCount">225</span></h1>
+                <button class="btn-fullscreen" id="fullscreenToggle" type="button" title="Full screen view">
+                    <svg class="fs-expand-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <svg class="fs-collapse-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                        <polyline points="4 14 10 14 10 20"></polyline>
+                        <polyline points="20 10 14 10 14 4"></polyline>
+                        <line x1="14" y1="10" x2="21" y2="3"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span class="fs-label">Full Screen</span>
+                </button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="date-filter-section">
+                    <!-- Date Range Trigger Button -->
+                    <button class="date-range-trigger" id="dateRangeTrigger" type="button">
+                        <svg class="trigger-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span class="trigger-dates" id="triggerDates">
+                            <span class="trigger-from placeholder" id="triggerFrom">Select dates</span>
+                            <span class="trigger-separator" style="display:none">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                            <span class="trigger-to" id="triggerTo"></span>
+                        </span>
+                        <svg class="trigger-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+
+                    <!-- Date Range Picker Popup -->
+                    <div class="date-picker-popup" id="datePickerPopup">
+                        <div class="picker-layout">
+                            <!-- Presets Sidebar -->
+                            <div class="picker-sidebar">
+                                <button class="preset-btn" data-preset="today" type="button">Today</button>
+                                <button class="preset-btn" data-preset="last3" type="button">Last 3 Days</button>
+                                <button class="preset-btn" data-preset="last7" type="button">Last 7 Days</button>
+                                <button class="preset-btn" data-preset="thisMonth" type="button">This Month</button>
+                                <button class="preset-btn" data-preset="lastMonth" type="button">Last Month</button>
+                            </div>
+
+                            <!-- Calendar Area -->
+                            <div class="picker-calendars">
+                                <!-- Selected Range Header -->
+                                <div class="picker-header">
+                                    <span class="picker-header-from empty" id="pickerHeaderFrom">Start date</span>
+                                    <span class="picker-header-arrow">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="picker-header-to empty" id="pickerHeaderTo">End date</span>
+                                </div>
+
+                                <!-- Two-month calendar grid -->
+                                <div class="calendars-row">
+                                    <!-- Left Calendar -->
+                                    <div class="calendar-month" id="calendarLeft">
+                                        <div class="month-nav">
+                                            <button class="nav-arrow nav-prev" id="navPrev" type="button">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                                </svg>
+                                            </button>
+                                            <button class="month-label month-label-btn" id="monthLabelLeft" type="button"></button>
+                                        </div>
+                                        <div class="weekday-row">
+                                            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                                        </div>
+                                        <div class="days-grid" id="daysGridLeft"></div>
+                                    </div>
+
+                                    <!-- Right Calendar -->
+                                    <div class="calendar-month" id="calendarRight">
+                                        <div class="month-nav">
+                                            <button class="month-label month-label-btn" id="monthLabelRight" type="button"></button>
+                                            <button class="nav-arrow nav-next" id="navNext" type="button">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="weekday-row">
+                                            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                                        </div>
+                                        <div class="days-grid" id="daysGridRight"></div>
+                                    </div>
+
+                                    <!-- Full-width Month/Year Picker Overlay -->
+                                    <div class="month-year-picker" id="monthYearPicker"></div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="picker-footer">
+                                    <button class="picker-btn-cancel" id="pickerCancel" type="button">Cancel</button>
+                                    <button class="picker-btn-done" id="pickerDone" type="button" disabled>Done</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="searchBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+
+                <!-- Filter + Export Buttons -->
+                <div class="toolbar-right">
+                    <button class="btn-filter" id="filterToggleBtn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Filters
+                        <span class="filter-badge" id="filterBadge" style="display:none">0</span>
+                    </button>
+                    <div class="export-buttons">
+                        <button class="btn-export" id="exportCsvBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="8" y1="13" x2="16" y2="13"></line>
+                                <line x1="8" y1="17" x2="16" y2="17"></line>
+                            </svg>
+                            Export CSV
+                        </button>
+                        <button class="btn-export" id="exportPdfBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
+                            </svg>
+                            Export PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Panel -->
+            <div class="filter-panel" id="filterPanel">
+                <div class="filter-grid">
+                    <div class="filter-field">
+                        <label class="filter-label">Module</label>
+                        <div class="searchable-select" data-key="module"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Sub Module</label>
+                        <div class="searchable-select" data-key="subModule"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Action</label>
+                        <div class="searchable-select" data-key="action"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Action By</label>
+                        <div class="searchable-select" data-key="actionBy"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Emp Name</label>
+                        <div class="searchable-select" data-key="empName"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Action From</label>
+                        <div class="searchable-select" data-key="actionFrom"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Payroll Date</label>
+                        <div class="searchable-select" data-key="payrollDate"></div>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label">Log Time</label>
+                        <div class="searchable-select" data-key="logTime"></div>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-clear-filter" id="clearFiltersBtn" type="button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selection Bar -->
+            <div class="selection-bar" id="selectionBar">
+                <div class="selection-info">
+                    <svg class="selection-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span><strong id="selectionCount">0</strong> logs selected</span>
+                    <button class="selection-clear" id="clearSelection" type="button">Clear</button>
+                </div>
+                <div class="selection-actions">
+                    <button class="btn-export-selected" id="exportSelectedCsvBtn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="17" x2="16" y2="17"></line>
+                        </svg>
+                        Export Selected CSV
+                    </button>
+                    <button class="btn-export-selected" id="exportSelectedPdfBtn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Export Selected PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table (Desktop + Tablet) -->
+            <div class="table-container">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="col-checkbox"><label class="checkbox-label"><input type="checkbox" id="selectAllCheckbox"><span class="checkbox-custom"></span></label></th>
+                            <th class="col-module">Module</th>
+                            <th class="col-submodule hide-tablet" data-key="subModule">Sub Module <span class="sort-icon"></span></th>
+                            <th class="col-activity" data-key="description">Activity <span class="sort-icon"></span></th>
+                            <th class="col-action">Action</th>
+                            <th class="col-actionby" data-key="actionBy">Action By <span class="sort-icon"></span></th>
+                            <th class="col-empname hide-tablet" data-key="empName">Emp Name <span class="sort-icon"></span></th>
+                            <th class="col-logged" data-key="logDate">Logged At <span class="sort-icon"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+
+                <!-- Mobile Card List -->
+                <div class="card-list" id="cardList">
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <div class="pagination-info" id="paginationInfo"></div>
+                <div class="pagination-controls">
+                    <div class="page-size-wrapper">
+                        <select class="page-size-select" id="pageSizeSelect">
+                            <option value="10" selected>10 / Page</option>
+                            <option value="25">25 / Page</option>
+                            <option value="50">50 / Page</option>
+                            <option value="100">100 / Page</option>
+                        </select>
+                    </div>
+                    <div class="page-buttons" id="pageButtons"></div>                </div>
+            </div>
+        </div>
+    </div>
+
+    </div><!-- /#pageActivityLogs -->
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page-section" id="pageSettings">
+    <div class="page-container settings-page-container">
+        <h1 class="settings-page-title">Settings</h1>
+        <div class="settings-layout">
+            <!-- Settings Left Nav -->
+            <div class="settings-nav">
+                <ul class="settings-nav-list">
+                    <!-- Management Accordion -->
+                    <li class="settings-nav-item nav-accordion open">
+                        <a href="#" class="settings-nav-link nav-accordion-toggle">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                            </svg>
+                            <span>Management</span>
+                            <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
+                        <ul class="nav-sub-list">
+                            <li class="settings-nav-item">
+                                <a href="#" class="settings-nav-link nav-sub-link" data-section="shifts">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    <span>Shifts & Time</span>
+                                </a>
+                            </li>
+                            <li class="settings-nav-item">
+                                <a href="#" class="settings-nav-link nav-sub-link" data-section="attendance">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path>
+                                    </svg>
+                                    <span>Attendance</span>
+                                </a>
+                            </li>
+                            <li class="settings-nav-item">
+                                <a href="#" class="settings-nav-link nav-sub-link" data-section="hardware">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                    <span>Hardware</span>
+                                </a>
+                            </li>
+                            <li class="settings-nav-item">
+                                <a href="#" class="settings-nav-link nav-sub-link" data-section="employee">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span>Employees</span>
+                                </a>
+                            </li>
+                            <li class="settings-nav-item">
+                                <a href="#" class="settings-nav-link nav-sub-link" data-section="payroll">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                    <span>Payroll</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Top-level items -->
+                    <li class="settings-nav-item">
+                        <a href="#" class="settings-nav-link" data-section="configurations">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            <span>Configurations</span>
+                        </a>
+                    </li>
+                    <li class="settings-nav-item active">
+                        <a href="#" class="settings-nav-link" data-section="salarySlip">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span>Salary Slip</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Settings Content Area -->
+            <div class="settings-content">
+                <!-- Management Scrollable Container -->
+                <div class="settings-section mgmt-scroll-wrapper" id="sectionManagement">
+                <div class="mgmt-scroll-container" id="mgmtScrollContainer">
+
+                <!-- Shifts & Time Management Section -->
+                <div class="mgmt-scroll-item" id="sectionShifts">
+                    <div class="mgmt-section">
+                        <div class="mgmt-section-header">
+                            <h2 class="mgmt-section-title">Shifts & Time Management</h2>
+                            <p class="mgmt-section-desc">Configure shift types and time tracking settings for your organization.</p>
+                        </div>
+                        <div class="mgmt-section-body">
+                            <div class="mgmt-setting-card">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Advance Shift</h4>
+                                    <p class="mgmt-setting-desc">This is the main profile that will be visible for everyone</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="advanceShiftToggle" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="mgmt-setting-note">(Basic shift stays active unless advanced shift is enabled)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Management Section -->
+                <div class="mgmt-scroll-item" id="sectionAttendance">
+                    <div class="mgmt-section">
+                        <div class="mgmt-section-header">
+                            <h2 class="mgmt-section-title">Attendance Management</h2>
+                            <p class="mgmt-section-desc">Manage attendance policies and tracking preferences.</p>
+                        </div>
+                        <div class="mgmt-section-body">
+                            <div class="mgmt-setting-card">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Enable Regularization</h4>
+                                    <p class="mgmt-setting-desc">Allow employees to submit attendance regularization requests</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="enableRegularizationToggle">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mgmt-setting-card mgmt-conditional-field" id="regularizationLimitCard" style="display:none;">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Regularization Limit <span class="mgmt-label-muted">(per month)</span></h4>
+                                    <p class="mgmt-setting-desc">Maximum number of regularization requests an employee can raise per month</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <div class="mgmt-input-group">
+                                        <input type="number" class="mgmt-input" id="regularizationLimitInput" placeholder="e.g. 3" min="1" max="31">
+                                        <span class="mgmt-input-error" id="regularizationLimitError">Please provide regularization limit</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardware Management Section -->
+                <div class="mgmt-scroll-item" id="sectionHardware">
+                    <div class="mgmt-section">
+                        <div class="mgmt-section-header">
+                            <h2 class="mgmt-section-title">Hardware Management</h2>
+                            <p class="mgmt-section-desc">Configure biometric devices and hardware integrations.</p>
+                        </div>
+                        <div class="mgmt-section-body">
+                            <div class="mgmt-setting-card">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Device Sync Time</h4>
+                                    <p class="mgmt-setting-desc">Enter the time when device syncs daily</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <div class="mgmt-time-picker" id="deviceSyncTimePicker">
+                                        <svg class="mgmt-time-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7f8e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        <input type="text" class="mgmt-time-input" id="deviceSyncTimeInput" value="1:00 PM" readonly>
+                                        <div class="mgmt-time-dropdown" id="syncTimeDropdown">
+                                            <div class="mgmt-time-scroll" id="syncTimeList"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Management Section -->
+                <div class="mgmt-scroll-item" id="sectionEmployee">
+                    <div class="mgmt-section">
+                        <div class="mgmt-section-header">
+                            <h2 class="mgmt-section-title">Employee Management</h2>
+                            <p class="mgmt-section-desc">Configure employee profiles, roles, and organizational structure.</p>
+                        </div>
+                        <div class="mgmt-section-body">
+                            <div class="mgmt-link-card">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Manage Branch</h4>
+                                    <p class="mgmt-setting-desc">Go to Manage Branch section</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <a href="#" class="mgmt-goto-btn">
+                                        Go To Manage Branch
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="mgmt-link-card">
+                                <div class="mgmt-setting-info">
+                                    <h4 class="mgmt-setting-title">Manage Employee</h4>
+                                    <p class="mgmt-setting-desc">Go to Manage Employee section</p>
+                                </div>
+                                <div class="mgmt-setting-control">
+                                    <a href="#" class="mgmt-goto-btn">
+                                        Go To Manage Employee
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payroll Management Section -->
+                <div class="mgmt-scroll-item" id="sectionPayroll">
+                    <div class="mgmt-section payroll-section">
+                        <div class="mgmt-section-header">
+                            <h2 class="mgmt-section-title">Payroll Management</h2>
+                            <p class="mgmt-section-desc">Set up payroll cycles, salary components, and compliance rules.</p>
+                        </div>
+                        <div class="mgmt-section-body payroll-body">
+
+                            <!-- Group: Payroll Type -->
+                            <div class="payroll-group">
+                            <div class="payroll-group-label">
+                                <span class="payroll-group-text">Payroll Type</span>
+                            </div>
+
+                            <!-- 1. Payroll with Compliance -->
+                            <div class="payroll-row">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Payroll with Compliance (Advance)</h4>
+                                    <p class="mgmt-setting-desc">This is the main profile that will be visible for everyone</p>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <div class="payroll-toggle-row">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="payrollAdvanceToggle">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <div class="payroll-hint-badge">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2e86c1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                            <span><strong>Basic Payroll</strong> stays active unless <strong>Advanced Payroll</strong> is enabled</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            </div><!-- /payroll-group: Payroll Type -->
+
+                            <!-- Group: Working Hours & Wages -->
+                            <div class="payroll-group">
+                            <div class="payroll-group-label">
+                                <span class="payroll-group-text">Working Hours & Wages</span>
+                            </div>
+
+                            <!-- 2. Working Hour Type -->
+                            <div class="payroll-row">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Working Hour Type</h4>
+                                    <p class="mgmt-setting-desc">Choose how employee working hours are calculated for payroll processing</p>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <input type="hidden" id="workingHourType" value="shiftWise">
+                                    <div class="seg-toggle">
+                                        <button type="button" class="seg-btn active" data-value="shiftWise">Shift Wise</button>
+                                        <button type="button" class="seg-btn" data-value="fixed">Fixed</button>
+                                    </div>
+                                    <!-- Shift Wise sub-fields -->
+                                    <div class="payroll-sub-fields" id="workingHourShiftFields">
+                                        <div class="payroll-inline-fields">
+                                            <div class="payroll-field-inline">
+                                                <label class="payroll-field-label">Full Day Buffer</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="0" min="0" max="23" id="fullDayBufferH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="15" min="0" max="59" id="fullDayBufferM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                            <div class="payroll-field-inline">
+                                                <label class="payroll-field-label">Half Day Buffer</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="0" min="0" max="23" id="halfDayBufferH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="2" min="0" max="59" id="halfDayBufferM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dur-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> For minutes only, keep <strong>hour = 0</strong> &mdash; e.g. <span class="dur-hint-ex">0</span> hour <span class="dur-hint-ex">15</span> min = 15 minutes</div>
+                                    </div>
+                                    <!-- Fixed sub-fields -->
+                                    <div class="payroll-sub-fields" id="workingHourFixedFields" style="display:none;">
+                                        <div class="payroll-inline-fields">
+                                            <div class="payroll-field-inline">
+                                                <label class="payroll-field-label">Full Day Hours</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="5" min="0" max="23" id="fullDayWorkHoursH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="30" min="0" max="59" id="fullDayWorkHoursM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                            <div class="payroll-field-inline">
+                                                <label class="payroll-field-label">Half Day Hours</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="2" min="0" max="23" id="halfDayWorkHoursH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="30" min="0" max="59" id="halfDayWorkHoursM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Off Day -->
+                            <div class="payroll-row">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Off Day</h4>
+                                    <p class="mgmt-setting-desc">Configure off day compensation settings</p>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <input type="hidden" id="offDayType" value="monetary">
+                                    <div class="seg-toggle" id="offDayOptions">
+                                        <button type="button" class="seg-btn active" data-value="monetary">Monetary</button>
+                                        <button type="button" class="seg-btn" data-value="timeOff">Compensated Time Off</button>
+                                    </div>
+                                    <div class="payroll-sub-fields" id="offDayMonetaryFields">
+                                        <div class="payroll-field-card">
+                                            <p class="payroll-hint">Week off working is paid out as <strong>3</strong> &times; times daily wage</p>
+                                            <div class="payroll-field" style="max-width:120px;">
+                                                <label class="payroll-field-label">Multiplier</label>
+                                                <input type="number" class="payroll-num-input" value="3" id="offDayMultiplier" min="1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Daily Wage -->
+                            <div class="payroll-row">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Daily Wage</h4>
+                                    <p class="mgmt-setting-desc">Configure daily wage calculation settings</p>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <input type="hidden" id="dailyWageType" value="specific">
+                                    <div class="seg-toggle" id="dailyWageOptions">
+                                        <button type="button" class="seg-btn active" data-value="specific">Specific Days <span class="wh-info-btn">i
+                                                <div class="wh-info-tooltip">
+                                                    <strong>How it works</strong>
+                                                    <p>Salary is divided by a <em>fixed number</em> you set (e.g. 30), regardless of the month.</p>
+                                                    <div class="wh-info-example">&#8377;30,000 &divide; <strong>30</strong> = &#8377;1,000/day</div>
+                                                    <div class="wh-info-note">Same daily wage every month</div>
+                                                </div>
+                                            </span></button>
+                                        <button type="button" class="seg-btn" data-value="calendar">Calendar Days <span class="wh-info-btn wh-info-btn-right">i
+                                                <div class="wh-info-tooltip">
+                                                    <strong>How it works</strong>
+                                                    <p>Salary is divided by the <em>actual number of days</em> in that month. Daily wage changes each month.</p>
+                                                    <div class="wh-info-example">Feb: &#8377;30,000 &divide; <strong>28</strong> = &#8377;1,071/day</div>
+                                                    <div class="wh-info-example">Mar: &#8377;30,000 &divide; <strong>31</strong> = &#8377;968/day</div>
+                                                    <div class="wh-info-note">Daily wage varies by month</div>
+                                                </div>
+                                            </span></button>
+                                    </div>
+                                    <div class="payroll-sub-fields" id="dailyWageSpecificFields">
+                                        <div class="payroll-field-card" style="max-width:200px;">
+                                            <label class="payroll-field-label">Number of Days</label>
+                                            <input type="number" class="payroll-num-input" value="30" id="dailyWageDays" min="1" max="31">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            </div><!-- /payroll-group: Working Hours & Wages -->
+
+                            <!-- Group: Overtime & Penalties -->
+                            <div class="payroll-group">
+                            <div class="payroll-group-label">
+                                <span class="payroll-group-text">Overtime & Penalties</span>
+                            </div>
+
+                            <!-- 5. Overtime -->
+                            <div class="payroll-row">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Overtime</h4>
+                                    <p class="mgmt-setting-desc">Configure overtime settings</p>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <input type="hidden" id="overtimeType" value="multiplier">
+                                    <div class="seg-toggle" id="overtimeOptions">
+                                        <button type="button" class="seg-btn active" data-value="multiplier">Multiplier <span class="wh-info-btn">i
+                                                <div class="wh-info-tooltip">
+                                                    <strong>Multiplier</strong>
+                                                    <p>Overtime pay = hourly wage &times; multiplier you set.</p>
+                                                    <div class="wh-info-example">Wage &#8377;100/hr &times; <strong>2x</strong> = &#8377;200/hr OT</div>
+                                                    <div class="wh-info-note">Best when OT pay is proportional to salary</div>
+                                                </div>
+                                            </span></button>
+                                        <button type="button" class="seg-btn" data-value="fixedPay">Fixed Pay <span class="wh-info-btn">i
+                                                <div class="wh-info-tooltip">
+                                                    <strong>Fixed Pay</strong>
+                                                    <p>A <em>flat amount</em> per overtime hour, regardless of employee salary.</p>
+                                                    <div class="wh-info-example">OT = <strong>&#8377;150</strong>/hr (same for everyone)</div>
+                                                    <div class="wh-info-note">Best when OT rate is fixed across all staff</div>
+                                                </div>
+                                            </span></button>
+                                        <button type="button" class="seg-btn" data-value="none">No Overtime <span class="wh-info-btn wh-info-btn-right">i
+                                                <div class="wh-info-tooltip">
+                                                    <strong>No Overtime</strong>
+                                                    <p>Extra hours worked beyond shift are <em>not tracked or paid</em>.</p>
+                                                    <div class="wh-info-note">Use when overtime is not applicable</div>
+                                                </div>
+                                            </span></button>
+                                    </div>
+                                    <div class="payroll-sub-fields" id="overtimeFields">
+                                        <div class="ot-strip">
+                                            <div class="ot-field" id="overtimeMultiplierRow">
+                                                <label class="ot-field-label">Multiplier of Hourly Wage</label>
+                                                <div class="ot-num-wrap">
+                                                    <input type="number" class="ot-num-input" value="2" id="overtimeMultiplier" min="1">
+                                                    <span class="ot-num-suffix">&times;</span>
+                                                </div>
+                                            </div>
+                                            <div class="ot-field" id="overtimeTotalHoursField">
+                                                <label class="ot-field-label">Total Monthly Hours</label>
+                                                <div class="ot-num-wrap">
+                                                    <input type="number" class="ot-num-input" value="280" id="overtimeTotalHours" min="1">
+                                                    <span class="ot-num-suffix">hrs</span>
+                                                </div>
+                                            </div>
+                                            <div class="ot-sep"></div>
+                                            <div class="ot-field">
+                                                <label class="ot-field-label">Buffer Period</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="0" min="0" max="23" id="overtimeBufferH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="1" min="0" max="59" id="overtimeBufferM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                            <div class="ot-field">
+                                                <label class="ot-field-label">Overtime Period</label>
+                                                <div class="dur-hm">
+                                                    <input type="number" value="0" min="0" max="23" id="overtimePeriodH"><span class="dur-label">hour</span>
+                                                    <input type="number" value="1" min="0" max="59" id="overtimePeriodM"><span class="dur-label">min</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dur-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> For minutes only, keep <strong>hour = 0</strong> &mdash; e.g. <span class="dur-hint-ex">0</span> hour <span class="dur-hint-ex">1</span> min = 1 minute</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6. Penalties -->
+                            <div class="payroll-row payroll-row-block">
+                                <div class="payroll-row-left">
+                                    <h4 class="mgmt-setting-title">Penalties</h4>
+                                </div>
+                                <div class="payroll-row-right">
+                                    <div class="pen-container">
+                                        <!-- Full Day Penalty -->
+                                        <div class="pen-row">
+                                            <div class="pen-row-head">
+                                                <span class="pen-title">Full Day Penalty</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="fullDayPenaltyToggle" checked>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="pen-row-fields" id="fullDayPenaltyFields">
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Allowed Days</label>
+                                                    <div class="ot-num-wrap">
+                                                        <input type="number" class="ot-num-input" value="0" id="fullDayAllowedDays" min="0">
+                                                        <span class="ot-num-suffix">days</span>
+                                                    </div>
+                                                </div>
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Penalty Time</label>
+                                                    <div class="dur-hm">
+                                                        <input type="number" value="0" min="0" max="23" id="fullDayPenaltyTimeH"><span class="dur-label">hour</span>
+                                                        <input type="number" value="15" min="0" max="59" id="fullDayPenaltyTimeM"><span class="dur-label">min</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pen-divider"></div>
+                                        <!-- Half Day Penalty -->
+                                        <div class="pen-row">
+                                            <div class="pen-row-head">
+                                                <span class="pen-title">Half Day Penalty</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="halfDayPenaltyToggle" checked>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="pen-row-fields" id="halfDayPenaltyFields">
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Allowed Days</label>
+                                                    <div class="ot-num-wrap">
+                                                        <input type="number" class="ot-num-input" value="0" id="halfDayAllowedDays" min="0">
+                                                        <span class="ot-num-suffix">days</span>
+                                                    </div>
+                                                </div>
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Penalty Time</label>
+                                                    <div class="dur-hm">
+                                                        <input type="number" value="0" min="0" max="23" id="halfDayPenaltyTimeH"><span class="dur-label">hour</span>
+                                                        <input type="number" value="10" min="0" max="59" id="halfDayPenaltyTimeM"><span class="dur-label">min</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pen-divider"></div>
+                                        <!-- Late Coming Penalty -->
+                                        <div class="pen-row">
+                                            <div class="pen-row-head">
+                                                <span class="pen-title">Late Coming</span>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="lateComingPenaltyToggle" checked>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            <div class="pen-row-fields" id="lateComingPenaltyFields">
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Allowed Days</label>
+                                                    <div class="ot-num-wrap">
+                                                        <input type="number" class="ot-num-input" value="0" id="lateComingAllowedDays" min="0">
+                                                        <span class="ot-num-suffix">days</span>
+                                                    </div>
+                                                </div>
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Penalty Period</label>
+                                                    <input type="hidden" id="penaltyPeriod" value="fixedPerDay">
+                                                    <div class="cdrop" id="penaltyPeriodDrop">
+                                                        <button type="button" class="cdrop-trigger">
+                                                            <span class="cdrop-value">Fixed Penalty Per Day</span>
+                                                            <svg class="cdrop-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                        </button>
+                                                        <div class="cdrop-menu">
+                                                            <div class="cdrop-opt cdrop-opt-active" data-value="fixedPerDay">Fixed Penalty Per Day</div>
+                                                            <div class="cdrop-opt" data-value="multiplierDailyWage">Multiplier of Daily Wage</div>
+                                                            <div class="cdrop-opt" data-value="fixedPerMinute">Fixed Penalty Per Minute</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Per Day Penalty</label>
+                                                    <div class="ot-num-wrap">
+                                                        <span class="ot-num-prefix">&#8377;</span>
+                                                        <input type="number" class="ot-num-input" value="10" id="perDayPenalty" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pen-divider"></div>
+                                        <!-- Grace Time -->
+                                        <div class="pen-row">
+                                            <div class="pen-row-head">
+                                                <span class="pen-title">Grace Time</span>
+                                            </div>
+                                            <div class="pen-row-fields">
+                                                <div class="ot-field">
+                                                    <label class="ot-field-label">Duration</label>
+                                                    <div class="dur-hm">
+                                                        <input type="number" value="0" min="0" max="23" id="graceTimeH"><span class="dur-label">hour</span>
+                                                        <input type="number" value="59" min="0" max="59" id="graceTimeM"><span class="dur-label">min</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dur-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> Grace time is the flexible window before an employee is marked late</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            </div><!-- /payroll-group: Overtime & Penalties -->
+
+                        </div>
+                    </div>
+                </div>
+
+                </div><!-- /mgmt-scroll-container -->
+                <div class="mgmt-unified-footer" id="mgmtUnifiedFooter">
+                    <button class="mgmt-btn-cancel" id="mgmtCancelBtn" type="button">Cancel</button>
+                    <button class="btn-save" id="mgmtSaveBtn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Save Changes
+                    </button>
+                </div>
+                </div><!-- /sectionManagement -->
+
+                <!-- Configurations Section -->
+                <div class="settings-section" id="sectionConfigurations">
+                    <div class="config-container">
+                        <!-- Promo Banner -->
+                        <div class="config-promo-banner">
+                            <div class="promo-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e86c1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </div>
+                            <div class="promo-content">
+                                <h3 class="promo-title">Petpooja's Device Software With Biometric Hardware</h3>
+                                <p class="promo-desc">Upgrade attendance management with our integrated biometric hardware solution.</p>
+                            </div>
+                            <a href="#" class="promo-link">
+                                Know More
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Setup Wizard Steps -->
+                        <div class="config-steps">
+                            <div class="config-steps-header">
+                                <div class="steps-header-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="steps-header-text">
+                                    <h3 class="config-section-title">Seamlessly integrate the application</h3>
+                                    <p class="config-section-subtitle">Follow the steps below to unlock all features</p>
+                                </div>
+                            </div>
+
+                            <div class="steps-timeline">
+                                <!-- Step 1 -->
+                                <div class="config-step">
+                                    <div class="step-indicator">
+                                        <div class="step-number">1</div>
+                                        <div class="step-line"></div>
+                                    </div>
+                                    <div class="step-card">
+                                        <div class="step-card-icon">
+                                            <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+                                                <rect width="40" height="40" rx="8" fill="#2e86c1"/>
+                                                <circle cx="20" cy="14" r="5" fill="#fff"/>
+                                                <path d="M10 30c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="#fff" opacity="0.85"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-card-content">
+                                            <h5 class="step-card-title">Download the application</h5>
+                                            <p class="step-card-desc">Download and install the Petpooja Payroll desktop application to manage attendance and payroll.</p>
+                                        </div>
+                                        <div class="step-card-actions">
+                                            <button class="btn-step-action btn-step-primary" type="button">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                </svg>
+                                                Download App
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="config-step">
+                                    <div class="step-indicator">
+                                        <div class="step-number">2</div>
+                                        <div class="step-line"></div>
+                                    </div>
+                                    <div class="step-card">
+                                        <div class="step-card-icon">
+                                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                                                <rect width="24" height="24" rx="6" fill="#e8f4fd"/>
+                                                <circle cx="12" cy="9" r="3" stroke="#2e86c1" stroke-width="1.5" fill="none"/>
+                                                <path d="M6 19c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#2e86c1" stroke-width="1.5" fill="none"/>
+                                                <circle cx="17" cy="7" r="2.5" fill="#2e86c1"/>
+                                                <path d="M15.5 7h3M17 5.5v3" stroke="#fff" stroke-width="1" stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-card-content">
+                                            <h5 class="step-card-title">Download the face recognition application</h5>
+                                            <p class="step-card-desc">Enable face recognition for contactless attendance with the biometric companion app.</p>
+                                        </div>
+                                        <div class="step-card-actions">
+                                            <button class="btn-step-action btn-step-outline" type="button">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="1 4 1 10 7 10"></polyline>
+                                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                                </svg>
+                                                Reset
+                                            </button>
+                                            <button class="btn-step-action btn-step-primary" type="button">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                </svg>
+                                                Download App
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="config-step last">
+                                    <div class="step-indicator">
+                                        <div class="step-number">3</div>
+                                    </div>
+                                    <div class="step-card">
+                                        <div class="step-card-icon">
+                                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                                                <rect width="24" height="24" rx="6" fill="#e8f4fd"/>
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#2e86c1" stroke-width="1.5" fill="none" transform="translate(3, -1)"/>
+                                                <circle cx="10" cy="7" r="3" stroke="#2e86c1" stroke-width="1.5" fill="none" transform="translate(2, 0)"/>
+                                                <path d="M19 8v4M17 10h4" stroke="#2e86c1" stroke-width="1.5" stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-card-content">
+                                            <h5 class="step-card-title">Manage User</h5>
+                                            <p class="step-card-desc">Add and configure users with roles and permissions for the attendance system.</p>
+                                        </div>
+                                        <div class="step-card-actions">
+                                            <button class="btn-step-action btn-step-primary" type="button">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                                                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                                                </svg>
+                                                Manage User
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salary Slip Section -->
+                <div class="settings-section active" id="sectionSalarySlip">
+                    <div class="salary-slip-layout">
+                        <!-- LEFT: Company Details Form -->
+                        <div class="salary-form-panel">
+                            <div class="panel-header panel-header-accent">
+                                <div class="panel-header-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="panel-title">Company Details</h2>
+                                    <p class="panel-subtitle">Configure your company information for salary slips</p>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <!-- Logo & Name Group -->
+                                <div class="form-group-card">
+                                    <div class="form-group-label">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                        Brand Identity
+                                    </div>
+                                    <div class="form-row-inline">
+                                        <div class="logo-upload-wrapper">
+                                            <div class="logo-upload-area" id="logoUploadArea">
+                                                <div class="logo-upload-placeholder" id="logoPlaceholder">
+                                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#93b8d7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                                    </svg>
+                                                    <span class="upload-text">Company Logo</span>
+                                                    <span class="upload-hint">Click to upload</span>
+                                                </div>
+                                                <img class="logo-preview-img" id="logoPreviewImg" style="display:none" alt="Company logo">
+                                                <input type="file" id="logoFileInput" accept="image/*" style="display:none">
+                                            </div>
+                                            <button class="logo-remove-btn" id="logoRemoveBtn" type="button" title="Remove logo" style="display:none">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="form-stack">
+                                            <div class="form-field">
+                                                <label class="form-label">Company Name <span class="required">*</span></label>
+                                                <input type="text" class="form-input" id="companyName" placeholder="Enter company name" value="Petpooja Payroll">
+                                            </div>
+                                            <div class="form-field">
+                                                <label class="form-label">Company Address <span class="required">*</span></label>
+                                                <input type="text" class="form-input" id="companyAddress" placeholder="Enter company address" value="Ahmedabad, Gujarat, India">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Group -->
+                                <div class="form-group-card">
+                                    <div class="form-group-label">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                        </svg>
+                                        Contact Information
+                                    </div>
+                                    <div class="form-grid-2">
+                                        <div class="form-field">
+                                            <label class="form-label">Contact Number <span class="required">*</span></label>
+                                            <input type="text" class="form-input" id="companyContact" placeholder="e.g. 07969223344" value="07969223344">
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="form-label">Website / Email</label>
+                                            <input type="text" class="form-input" id="companyEmail" placeholder="e.g. info@company.com" value="payroll@petpooja.com">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Preferences Group -->
+                                <div class="form-group-card">
+                                    <div class="form-group-label">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9"></path>
+                                        </svg>
+                                        Preferences
+                                    </div>
+                                    <div class="toggle-row">
+                                        <div class="toggle-field">
+                                            <span class="toggle-label">Auto Release Payslip</span>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="autoReleaseToggle">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="toggle-field">
+                                            <span class="toggle-label">Branch Wise Payslip</span>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="branchWiseToggle">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button class="btn-save" id="saveCompanyDetails" type="button">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Salary Slip Preview -->
+                        <div class="salary-preview-panel">
+                            <div class="panel-header panel-header-accent">
+                                <div class="panel-header-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="panel-title">Salary Slip Preview</h2>
+                                    <p class="panel-subtitle">This is how the generated PDF will look</p>
+                                </div>
+                                <button class="btn-download-pdf" id="downloadSlipPdf" type="button">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Download PDF
+                                </button>
+                            </div>
+                            <div class="panel-body slip-preview-body">
+                                <div class="salary-slip-card" id="salarySlipCard">
+                                    <!-- PDF Top Color Bar -->
+                                    <div class="slip-top-bar"></div>
+
+                                    <!-- Slip Header -->
+                                    <div class="slip-header">
+                                        <div class="slip-company-logo" id="slipLogoArea">
+                                            <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                                                <rect width="40" height="40" rx="8" fill="#2e86c1"/>
+                                                <circle cx="20" cy="14" r="5" fill="#fff"/>
+                                                <path d="M10 30c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="#fff" opacity="0.85"/>
+                                            </svg>
+                                        </div>
+                                        <div class="slip-company-info">
+                                            <h3 class="slip-company-name" id="slipCompanyName">Petpooja Payroll</h3>
+                                            <p class="slip-company-address" id="slipCompanyAddress">Ahmedabad, Gujarat, India</p>
+                                            <p class="slip-company-contact" id="slipCompanyContact">07969223344 | payroll@petpooja.com</p>
+                                        </div>
+                                        <div class="slip-month-badge">Feb 2026</div>
+                                    </div>
+
+                                    <!-- Slip Title Bar -->
+                                    <div class="slip-title-bar">PAYSLIP FOR THE MONTH OF FEBRUARY 2026</div>
+
+                                    <!-- Employee Details -->
+                                    <div class="slip-section">
+                                        <h4 class="slip-section-title">Employee Details</h4>
+                                        <div class="slip-details-grid">
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Name</span><span class="slip-detail-value">Jinay Shah</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Code</span><span class="slip-detail-value">EMP001</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Designation</span><span class="slip-detail-value">Software Engineer</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Department</span><span class="slip-detail-value">Engineering</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">UAN Number</span><span class="slip-detail-value">1234 5678 9012</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Work Location</span><span class="slip-detail-value">Ahmedabad</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Bank Name</span><span class="slip-detail-value">HDFC Bank</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Bank A/C No.</span><span class="slip-detail-value">XXXX XXXX 4567</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">IFSC Code</span><span class="slip-detail-value">HDFC0001234</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">Branch</span><span class="slip-detail-value">SG Highway</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">PF Number</span><span class="slip-detail-value">GJ/AHD/12345</span></div>
+                                            <div class="slip-detail-item"><span class="slip-detail-label">ESIC Number</span><span class="slip-detail-value">31-00-123456</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Earnings & Deductions -->
+                                    <div class="slip-section">
+                                        <div class="slip-earnings-deductions">
+                                            <div class="slip-ed-column">
+                                                <h4 class="slip-section-title">Earnings</h4>
+                                                <div class="slip-ed-row"><span>Basic Salary</span><span>25,000</span></div>
+                                                <div class="slip-ed-row"><span>HRA</span><span>10,000</span></div>
+                                                <div class="slip-ed-row"><span>Special Allowance</span><span>5,000</span></div>
+                                                <div class="slip-ed-row"><span>Conveyance</span><span>1,600</span></div>
+                                                <div class="slip-ed-row slip-ed-total"><span>Total Earnings</span><span>41,600</span></div>
+                                            </div>
+                                            <div class="slip-ed-divider"></div>
+                                            <div class="slip-ed-column">
+                                                <h4 class="slip-section-title">Deductions</h4>
+                                                <div class="slip-ed-row"><span>PF (Employee)</span><span>1,800</span></div>
+                                                <div class="slip-ed-row"><span>Professional Tax</span><span>200</span></div>
+                                                <div class="slip-ed-row"><span>TDS</span><span>2,500</span></div>
+                                                <div class="slip-ed-row"><span>ESIC</span><span>312</span></div>
+                                                <div class="slip-ed-row slip-ed-total"><span>Total Deductions</span><span>4,812</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Summary Footer -->
+                                    <div class="slip-footer">
+                                        <div class="slip-footer-row">
+                                            <div class="slip-footer-item"><span class="slip-footer-label">Worked Days</span><span class="slip-footer-value">22</span></div>
+                                            <div class="slip-footer-item"><span class="slip-footer-label">Weekly Off</span><span class="slip-footer-value">8</span></div>
+                                            <div class="slip-footer-item slip-net-pay"><span class="slip-footer-label">Net Pay</span><span class="slip-footer-value">36,788</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Net Pay in Words -->
+                                    <div class="slip-pay-words" id="slipPayWords">
+                                        <span class="pay-words-label">In Words:</span>
+                                        <span class="pay-words-value">Thirty Six Thousand Seven Hundred Eighty Eight Rupees Only</span>
+                                    </div>
+
+                                    <!-- Authorized Signatory -->
+                                    <div class="slip-signatory" id="slipSignatory">
+                                        <div class="signatory-item">
+                                            <div class="signatory-line"></div>
+                                            <span class="signatory-label">Employee Signature</span>
+                                        </div>
+                                        <div class="signatory-item">
+                                            <div class="signatory-line"></div>
+                                            <span class="signatory-label">Authorized Signatory</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- PDF Watermark -->
+                                    <div class="slip-generated-note">Computer generated payslip - No signature required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><!-- /#pageSettings -->
+
+    </div><!-- /.app-main -->
+
+    <!-- Unsaved Changes Modal -->
+    <div class="unsaved-modal-overlay" id="unsavedModal">
+        <div class="unsaved-modal">
+            <div class="unsaved-modal-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <button class="unsaved-modal-close" id="unsavedCloseBtn" type="button">&times;</button>
+            <h3 class="unsaved-modal-title">Unsaved Changes</h3>
+            <p class="unsaved-modal-text">You have unsaved changes. Do you want to discard these changes and continue?</p>
+            <div class="unsaved-modal-actions">
+                <button class="unsaved-btn unsaved-btn-cancel" id="unsavedCancelBtn">Cancel</button>
+                <button class="unsaved-btn unsaved-btn-discard" id="unsavedDiscard">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll Type Changed Modal -->
+    <div class="unsaved-modal-overlay" id="payrollTypeModal">
+        <div class="unsaved-modal payroll-type-modal">
+            <button class="unsaved-modal-close" id="payrollTypeCloseBtn" type="button">&times;</button>
+
+            <!-- Header -->
+            <div class="ptm-header">
+                <div class="ptm-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <h3 class="ptm-title">Payroll Type Changed</h3>
+            </div>
+
+            <!-- Connected body -->
+            <div class="ptm-body">
+                <p class="ptm-question">Switch from <span class="ptm-tag ptm-tag-muted">Basic Payroll <span class="ptm-tag-sub">without compliance</span></span> to <span class="ptm-tag ptm-tag-blue">Advanced Payroll <span class="ptm-tag-sub">with compliance</span></span> effective from <span class="required-star">*</span></p>
+
+                <div class="ptm-date-block">
+                    <div class="mini-cal-wrap" id="miniCalWrap">
+                        <button type="button" class="mini-cal-trigger" id="miniCalTrigger">
+                            <span class="mini-cal-text" id="miniCalText">Pick a date</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aabbf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="mini-cal-dropdown" id="miniCalDropdown">
+                            <div class="mini-cal-nav">
+                                <button type="button" class="mini-cal-nav-btn" id="miniCalPrev">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <span class="mini-cal-month-label" id="miniCalMonthLabel"></span>
+                                <button type="button" class="mini-cal-nav-btn" id="miniCalNext">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
+                            <div class="mini-cal-weekdays">
+                                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                            </div>
+                            <div class="mini-cal-grid" id="miniCalGrid"></div>
+                        </div>
+                    </div>
+                    <span class="payroll-type-date-error" id="payrollDateError">Please select an effective date</span>
+                </div>
+
+                <!-- Future date info banner (hidden by default) -->
+                <div class="ptm-future-banner" id="ptmFutureBanner" style="display:none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2e86c1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span id="ptmFutureText"></span>
+                </div>
+            </div>
+
+            <div class="unsaved-modal-actions ptm-actions">
+                <button class="unsaved-btn unsaved-btn-cancel" id="payrollTypeCancelBtn">Cancel</button>
+                <button class="unsaved-btn unsaved-btn-save" id="payrollTypeDoneBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Logo Confirmation Modal -->
+    <div class="unsaved-modal-overlay" id="removeLogoModal">
+        <div class="unsaved-modal">
+            <div class="unsaved-modal-icon" style="background:#fde8e8">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+            </div>
+            <h3 class="unsaved-modal-title">Remove Logo</h3>
+            <p class="unsaved-modal-text">Are you sure you want to remove the company logo? This action cannot be undone.</p>
+            <div class="unsaved-modal-actions">
+                <button class="unsaved-btn unsaved-btn-discard" id="removeLogoCancel">Cancel</button>
+                <button class="unsaved-btn unsaved-btn-danger" id="removeLogoConfirm">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Editor Overlay -->
+    <div class="img-editor-overlay" id="imgEditorOverlay">
+        <div class="img-editor">
+            <div class="img-editor-header">
+                <h3 class="img-editor-title">Edit Logo</h3>
+                <button class="img-editor-close" id="imgEditorClose" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="img-editor-canvas-area">
+                <canvas id="imgEditorCanvas"></canvas>
+                <!-- Crop overlay (visible only in crop mode) -->
+                <div class="crop-overlay" id="cropOverlay" style="display:none">
+                    <div class="crop-selection" id="cropSelection">
+                        <div class="crop-handle crop-handle-tl"></div>
+                        <div class="crop-handle crop-handle-tr"></div>
+                        <div class="crop-handle crop-handle-bl"></div>
+                        <div class="crop-handle crop-handle-br"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-editor-toolbar">
+                <button class="editor-tool-btn" data-action="crop" type="button" title="Crop">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path>
+                        <path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path>
+                    </svg>
+                    <span>Crop</span>
+                </button>
+                <button class="editor-tool-btn" data-action="mirror" type="button" title="Mirror">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3"></path>
+                        <path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"></path>
+                        <line x1="12" y1="2" x2="12" y2="22"></line>
+                    </svg>
+                    <span>Mirror</span>
+                </button>
+                <button class="editor-tool-btn" data-action="reset" type="button" title="Reset All">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>Reset</span>
+                </button>
+                <div class="editor-sliders">
+                    <div class="editor-tool-slider">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
+                        </svg>
+                        <input type="range" id="rotationSlider" min="-180" max="180" value="0" class="editor-range">
+                        <span class="editor-range-val" id="rotationVal">0°</span>
+                    </div>
+                    <div class="editor-tool-slider">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                        </svg>
+                        <input type="range" id="brightnessSlider" min="50" max="150" value="100" class="editor-range">
+                        <span class="editor-range-val" id="brightnessVal">100%</span>
+                    </div>
+                    <div class="editor-tool-slider">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <input type="range" id="contrastSlider" min="50" max="150" value="100" class="editor-range">
+                        <span class="editor-range-val" id="contrastVal">100%</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Crop mode action bar -->
+            <div class="crop-action-bar" id="cropActionBar" style="display:none">
+                <span class="crop-hint">Drag on the image to select crop area</span>
+                <div class="crop-action-btns">
+                    <button class="unsaved-btn unsaved-btn-discard" id="cropCancelBtn" type="button">Cancel</button>
+                    <button class="unsaved-btn unsaved-btn-save" id="cropApplyBtn" type="button">Apply Crop</button>
+                </div>
+            </div>
+            <div class="img-editor-footer">
+                <button class="unsaved-btn unsaved-btn-discard" id="imgEditorCancel" type="button">Cancel</button>
+                <button class="unsaved-btn unsaved-btn-save" id="imgEditorUpload" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
