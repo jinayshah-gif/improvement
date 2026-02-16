@@ -174,14 +174,13 @@
                     <span>Dynamic Reports</span>
                 </a>
             </li>
-            <li class="sidebar-item has-submenu">
+            <li class="sidebar-item" data-page="userManagement" id="sidebarUserMgmt">
                 <a href="#" class="sidebar-link">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     <span>User Management</span>
-                    <svg class="submenu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </a>
             </li>
             <li class="sidebar-divider"></li>
@@ -616,6 +615,11 @@
             <div class="settings-content">
                 <!-- Management Scrollable Container -->
                 <div class="settings-section mgmt-scroll-wrapper" id="sectionManagement">
+                <!-- Floating sticky header -->
+                <div class="mgmt-floating-header" id="mgmtFloatingHeader">
+                    <span class="mgmt-fh-title" id="mgmtFhTitle"></span>
+                    <span class="mgmt-fh-desc" id="mgmtFhDesc"></span>
+                </div>
                 <div class="mgmt-scroll-container" id="mgmtScrollContainer">
 
                 <!-- Shifts & Time Management Section -->
@@ -1513,7 +1517,589 @@
     </div>
     </div><!-- /#pageSettings -->
 
+    <!-- ===== USER MANAGEMENT PAGE ===== -->
+    <div class="page-section" id="pageUserManagement">
+    <div class="page-container">
+
+        <!-- Compact Tab Navigation -->
+        <div class="um-tabs-container">
+            <div class="um-tabs-wrapper">
+                <h2 class="um-page-title">User Management</h2>
+                <div class="um-tabs">
+                    <button class="um-tab active" data-um-tab="users" id="umTabUsers" title="Manage all user accounts">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span class="um-tab-label">Users</span>
+                        <span class="um-tab-badge" id="umTabUserCount">208</span>
+                    </button>
+                    <button class="um-tab" data-um-tab="templates" id="umTabTemplates" title="Predefined permission sets">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        <span class="um-tab-label">Rights Templates</span>
+                        <span class="um-tab-badge" id="umTabTemplateCount">200</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab Content -->
+        <div class="um-tab-panel active" id="umPanelUsers">
+        <div class="um-view active" id="umViewManageUsers">
+            <div class="card">
+                <!-- Header -->
+                <div class="card-header um-header">
+                    <h1 class="page-title">Manage Users <span class="count" id="umUserCount">8</span></h1>
+                    <div class="um-header-actions">
+                        <button class="btn-filter" id="umFilterToggleBtn" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            Filters
+                            <span class="filter-badge" id="umFilterBadge" style="display:none">0</span>
+                        </button>
+                        <button class="btn-um-primary" id="umCreateUserBtn" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Create User
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Panel -->
+                <div class="filter-panel" id="umFilterPanel">
+                    <div class="filter-grid">
+                        <div class="filter-field">
+                            <label class="filter-label">Name</label>
+                            <div class="searchable-select um-filter" data-um-key="name"></div>
+                        </div>
+                        <div class="filter-field">
+                            <label class="filter-label">Phone Number</label>
+                            <div class="searchable-select um-filter" data-um-key="phone"></div>
+                        </div>
+                        <div class="filter-field">
+                            <label class="filter-label">Email</label>
+                            <div class="searchable-select um-filter" data-um-key="email"></div>
+                        </div>
+                        <div class="filter-field">
+                            <label class="filter-label">Super Admin</label>
+                            <div class="searchable-select um-filter" data-um-key="superAdmin"></div>
+                        </div>
+                        <div class="filter-field">
+                            <label class="filter-label">Assigned Template</label>
+                            <div class="searchable-select um-filter" data-um-key="template"></div>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-clear-filter" id="umClearFiltersBtn" type="button">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Clear All Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container">
+                    <table class="data-table um-table">
+                        <thead>
+                            <tr>
+                                <th class="um-col-name">Name</th>
+                                <th class="um-col-phone">Phone Number</th>
+                                <th class="um-col-email">Email</th>
+                                <th class="um-col-template">Assigned Template</th>
+                                <th class="um-col-action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="umTableBody">
+                            <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container um-pagination">
+                    <div class="pagination-info" id="umPaginationInfo"></div>
+                    <div class="pagination-controls">
+                        <div class="page-size-wrapper">
+                            <select class="page-size-select" id="umPageSizeSelect">
+                                <option value="10" selected>10 / Page</option>
+                                <option value="25">25 / Page</option>
+                                <option value="50">50 / Page</option>
+                                <option value="100">100 / Page</option>
+                            </select>
+                        </div>
+                        <div class="page-buttons" id="umPageButtons"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div><!-- /#umPanelUsers -->
+
+        <!-- Templates Tab Content -->
+        <div class="um-tab-panel" id="umPanelTemplates">
+        <div class="um-view active" id="umViewManageTemplates">
+            <div class="card">
+                <div class="card-header um-header">
+                    <h1 class="page-title">Rights Templates <span class="count" id="umTemplateCount">0</span></h1>
+                    <div class="um-header-actions">
+                        <button class="btn-um-secondary" id="umTemplateFilterToggleBtn" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            Filter
+                            <span class="um-filter-badge" id="umTemplateFilterBadge" style="display:none;">0</span>
+                        </button>
+                        <button class="btn-um-primary" id="umCreateTemplateBtn" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Create Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Panel -->
+                <div class="filter-panel" id="umTemplateFilterPanel">
+                    <div class="filter-grid">
+                        <div class="filter-field">
+                            <label class="filter-label">Template Name</label>
+                            <div class="searchable-select um-filter" data-um-key="templateName"></div>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-clear-filter" id="umTemplateClearFiltersBtn" type="button">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Clear All Filters
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table um-table">
+                        <thead>
+                            <tr>
+                                <th>Template Name</th>
+                                <th>No. Of Assigned People</th>
+                                <th>Created On</th>
+                                <th>Last Modified</th>
+                                <th class="um-col-action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="umTemplateTableBody">
+                            <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container um-pagination">
+                    <div class="pagination-info" id="umTemplatePaginationInfo"></div>
+                    <div class="pagination-controls">
+                        <div class="page-size-wrapper">
+                            <select class="page-size-select" id="umTemplatePageSizeSelect">
+                                <option value="10" selected>10 / Page</option>
+                                <option value="25">25 / Page</option>
+                                <option value="50">50 / Page</option>
+                                <option value="100">100 / Page</option>
+                            </select>
+                        </div>
+                        <div class="page-buttons" id="umTemplatePageButtons"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div><!-- /#umPanelTemplates -->
+
+        <!-- Assign Rights View -->
+        <div class="um-view" id="umViewAssignRights">
+            <div class="card">
+                <!-- Header with back button -->
+                <div class="card-header um-rights-header">
+                    <div class="um-rights-back">
+                        <button class="um-back-btn" id="umBackToUsers" type="button">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <h1 class="page-title">Users: <span id="umRightsUserName">—</span></h1>
+                    </div>
+                    <button class="btn-um-primary" id="umSaveRightsBtn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+
+                <!-- 3-Column Rights Layout -->
+                <div class="um-rights-columns">
+                    <!-- Column 1: Branches -->
+                    <div class="um-rights-col">
+                        <div class="um-rights-col-header">
+                            <h3 class="um-rights-col-title">Select Branches</h3>
+                            <button class="um-rights-toggle-all" id="umBranchToggle" type="button">Unselect All</button>
+                        </div>
+                        <div class="um-rights-list" id="umBranchList">
+                            <label class="um-rights-checkbox"><input type="checkbox" checked data-branch="main"><span class="checkbox-custom"></span>Main Branch</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" checked data-branch="north"><span class="checkbox-custom"></span>North Office</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" checked data-branch="south"><span class="checkbox-custom"></span>South Office</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" checked data-branch="east"><span class="checkbox-custom"></span>East Wing</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" checked data-branch="west"><span class="checkbox-custom"></span>West Wing</label>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Departments -->
+                    <div class="um-rights-col">
+                        <div class="um-rights-col-header">
+                            <h3 class="um-rights-col-title">Select Departments</h3>
+                            <button class="um-rights-toggle-all" id="umDeptToggle" type="button">Select All</button>
+                        </div>
+                        <div class="um-rights-list" id="umDeptList">
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="engineering"><span class="checkbox-custom"></span>Engineering</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="hr"><span class="checkbox-custom"></span>Human Resources</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="finance"><span class="checkbox-custom"></span>Finance</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="marketing"><span class="checkbox-custom"></span>Marketing</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="sales"><span class="checkbox-custom"></span>Sales</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="operations"><span class="checkbox-custom"></span>Operations</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-dept="support"><span class="checkbox-custom"></span>Support</label>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Rights -->
+                    <div class="um-rights-col">
+                        <div class="um-rights-col-header">
+                            <h3 class="um-rights-col-title">Select Rights</h3>
+                            <div class="um-rights-template-select">
+                                <select class="um-template-dropdown" id="umTemplateDropdown">
+                                    <option value="">Select Template</option>
+                                    <option value="admin">Admin Template</option>
+                                    <option value="manager">Manager Template</option>
+                                    <option value="viewer">Viewer Template</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="um-rights-list" id="umRightsList">
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="dashboard"><span class="checkbox-custom"></span>Dashboard</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="employees"><span class="checkbox-custom"></span>Employees</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="shifts"><span class="checkbox-custom"></span>Manage Shifts</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="leaves"><span class="checkbox-custom"></span>Leaves & Holidays</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="approvals"><span class="checkbox-custom"></span>Approval Requests</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="payroll"><span class="checkbox-custom"></span>Payroll</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="loans"><span class="checkbox-custom"></span>Loans & Advances</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="reports"><span class="checkbox-custom"></span>Reports</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="settings"><span class="checkbox-custom"></span>Settings</label>
+                            <label class="um-rights-checkbox"><input type="checkbox" data-right="activityLogs"><span class="checkbox-custom"></span>Activity Logs</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div><!-- /#pageUserManagement -->
+
     </div><!-- /.app-main -->
+
+    <!-- Create User Slide-in Panel -->
+    <div class="um-slidein-overlay" id="umCreateOverlay">
+        <div class="um-slidein-panel" id="umCreatePanel">
+            <div class="um-slidein-header">
+                <h2 class="um-slidein-title" id="umPanelTitle">Create User</h2>
+                <button class="um-slidein-close" id="umCreateClose" type="button">&times;</button>
+            </div>
+            <div class="um-slidein-body">
+
+                <!-- Screen: Create/Edit Form -->
+                <div class="um-panel-screen active" id="umScreenForm">
+
+                    <!-- Section 1: User Details -->
+                    <div class="um-form-section">
+                        <div class="um-section-header">
+                            <span class="um-section-number">1</span>
+                            <span class="um-section-title">User Details</span>
+                        </div>
+                        <div class="um-section-body">
+                            <div class="um-form-group">
+                                <label class="um-form-label">User Name <span class="um-required">*</span></label>
+                                <input type="text" class="um-form-input" id="umNewUserName" placeholder="Enter user name">
+                                <span class="um-form-error" id="umNameError">Please enter user name</span>
+                            </div>
+                            <div class="um-form-group">
+                                <label class="um-form-label">Phone Number <span class="um-required">*</span></label>
+                                <div class="um-phone-input">
+                                    <span class="um-phone-prefix">+91</span>
+                                    <input type="tel" class="um-form-input" id="umNewUserPhone" placeholder="Enter phone number" maxlength="10">
+                                </div>
+                                <span class="um-form-error" id="umPhoneError">Please enter valid phone number</span>
+                            </div>
+                            <div class="um-form-group">
+                                <label class="um-form-label">E-mail ID</label>
+                                <input type="email" class="um-form-input" id="umNewUserEmail" placeholder="Enter email address">
+                                <span class="um-form-error" id="umEmailError">Please enter valid email</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Assign Rights (only visible in create mode) -->
+                    <div class="um-form-section" id="umAssignChoiceSection">
+                        <div class="um-section-header">
+                            <span class="um-section-number">2</span>
+                            <span class="um-section-title">Assign Rights</span>
+                        </div>
+                        <div class="um-section-body">
+                            <div class="um-assign-options">
+                                <button type="button" class="um-assign-option" id="umChoiceAssignNow">
+                                    <span class="um-assign-check"></span>
+                                    <span class="um-assign-option-text">
+                                        <strong>Assign Now</strong>
+                                        <small>Set branches, departments & rights</small>
+                                    </span>
+                                </button>
+                                <button type="button" class="um-assign-option" id="umChoiceAssignLater">
+                                    <span class="um-assign-check"></span>
+                                    <span class="um-assign-option-text">
+                                        <strong>Assign Later</strong>
+                                        <small>You can assign from the table</small>
+                                    </span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wizard Screen 1: Branches -->
+                <div class="um-panel-screen" id="umScreenWizard1">
+                    <!-- Progress Indicator -->
+                    <div class="um-wizard-progress">
+                        <div class="um-wizard-progress-step active">
+                            <div class="um-wizard-dot">1</div>
+                            <span>Branches</span>
+                        </div>
+                        <div class="um-wizard-progress-line active"></div>
+                        <div class="um-wizard-progress-step">
+                            <div class="um-wizard-dot">2</div>
+                            <span>Departments</span>
+                        </div>
+                        <div class="um-wizard-progress-line"></div>
+                        <div class="um-wizard-progress-step">
+                            <div class="um-wizard-dot">3</div>
+                            <span>Rights</span>
+                        </div>
+                    </div>
+                    <div class="um-wizard-step-header">
+                        <h3 class="um-wizard-step-title">Select Branches</h3>
+                        <p class="um-wizard-step-desc">Choose which branches this user can access</p>
+                        <button type="button" class="um-wizard-modify-link" data-goto-screen="form">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Modify User Details
+                        </button>
+                    </div>
+                    <div class="um-wizard-checklist-wrapper">
+                        <div class="um-wizard-list-toolbar">
+                            <span class="um-wizard-count" id="umWizardBranchCount">0 selected</span>
+                            <button class="um-rights-toggle-all" id="umWizardBranchToggle" type="button">Select All</button>
+                        </div>
+                        <div class="um-wizard-checklist" id="umWizardBranchList"></div>
+                    </div>
+                </div>
+
+                <!-- Wizard Screen 2: Departments -->
+                <div class="um-panel-screen" id="umScreenWizard2">
+                    <!-- Progress Indicator -->
+                    <div class="um-wizard-progress">
+                        <div class="um-wizard-progress-step completed">
+                            <div class="um-wizard-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            <span>Branches</span>
+                        </div>
+                        <div class="um-wizard-progress-line active"></div>
+                        <div class="um-wizard-progress-step active">
+                            <div class="um-wizard-dot">2</div>
+                            <span>Departments</span>
+                        </div>
+                        <div class="um-wizard-progress-line"></div>
+                        <div class="um-wizard-progress-step">
+                            <div class="um-wizard-dot">3</div>
+                            <span>Rights</span>
+                        </div>
+                    </div>
+                    <!-- Previous selections -->
+                    <div class="um-wizard-prev-selections" id="umWizardPrevStep2"></div>
+                    <div class="um-wizard-step-header">
+                        <h3 class="um-wizard-step-title">Select Departments</h3>
+                        <p class="um-wizard-step-desc">Choose which departments this user belongs to</p>
+                    </div>
+                    <div class="um-wizard-checklist-wrapper">
+                        <div class="um-wizard-list-toolbar">
+                            <span class="um-wizard-count" id="umWizardDeptCount">0 selected</span>
+                            <button class="um-rights-toggle-all" id="umWizardDeptToggle" type="button">Select All</button>
+                        </div>
+                        <div class="um-wizard-checklist" id="umWizardDeptList"></div>
+                    </div>
+                </div>
+
+                <!-- Wizard Screen 3: Rights & Template -->
+                <div class="um-panel-screen" id="umScreenWizard3">
+                    <!-- Progress Indicator -->
+                    <div class="um-wizard-progress">
+                        <div class="um-wizard-progress-step completed">
+                            <div class="um-wizard-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            <span>Branches</span>
+                        </div>
+                        <div class="um-wizard-progress-line active"></div>
+                        <div class="um-wizard-progress-step completed">
+                            <div class="um-wizard-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            <span>Departments</span>
+                        </div>
+                        <div class="um-wizard-progress-line active"></div>
+                        <div class="um-wizard-progress-step active">
+                            <div class="um-wizard-dot">3</div>
+                            <span>Rights</span>
+                        </div>
+                    </div>
+                    <!-- Previous selections -->
+                    <div class="um-wizard-prev-selections" id="umWizardPrevStep3"></div>
+                    <div class="um-wizard-step-header">
+                        <h3 class="um-wizard-step-title">Assign Rights</h3>
+                        <p class="um-wizard-step-desc">Choose a template or select individual rights</p>
+                    </div>
+                    <div class="um-wizard-template-section" id="umWizardTemplateSection">
+                        <div class="um-template-card">
+                            <div class="um-template-card-header">
+                                <svg class="um-template-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <div class="um-template-card-title-group">
+                                    <h4 class="um-template-card-title">Quick Assign with Template</h4>
+                                    <p class="um-template-card-desc">Select a template to auto-assign rights</p>
+                                </div>
+                            </div>
+                            <div class="um-template-card-body">
+                                <div class="um-wizard-template-wrap" id="umWizardTemplateWrap">
+                                    <select class="um-template-dropdown" id="umWizardTemplateDropdown">
+                                        <option value="">Select a template...</option>
+                                        <option value="admin">Admin Template</option>
+                                        <option value="manager">Manager Template</option>
+                                        <option value="viewer">Viewer Template</option>
+                                    </select>
+                                </div>
+                                <div class="um-template-helper">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M12 16v-4"></path>
+                                        <path d="M12 8h.01"></path>
+                                    </svg>
+                                    <span>Can't find what you need? <button type="button" class="um-create-template-link" id="umCreateTemplateLink">Create a new template</button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="um-wizard-rights-divider">
+                        <span>or select custom rights</span>
+                    </div>
+                    <div class="um-wizard-checklist-wrapper">
+                        <div class="um-wizard-list-toolbar">
+                            <span class="um-wizard-count" id="umWizardRightsCount">0 selected</span>
+                        </div>
+                        <div class="um-wizard-checklist" id="umWizardRightsList"></div>
+                    </div>
+                </div>
+
+                <!-- Wizard Screen 4: Review Summary -->
+                <div class="um-panel-screen" id="umScreenWizardSummary">
+                    <div class="um-wizard-step-header">
+                        <h3 class="um-wizard-step-title">Review Selections</h3>
+                        <p class="um-wizard-step-desc">Review and edit your selections before creating the user</p>
+                    </div>
+                    <div class="um-wizard-summary-content" id="umWizardSummaryContent"></div>
+                </div>
+
+                <!-- Screen: Final Success -->
+                <div class="um-panel-screen" id="umScreenDone">
+                    <div class="um-panel-success">
+                        <div class="um-panel-success-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="um-panel-success-title" id="umDoneTitle">User created successfully</h3>
+                        <p class="um-panel-success-text" id="umDoneSubtitle"></p>
+                    </div>
+                    <div class="um-done-summary" id="umDoneSummary"></div>
+                </div>
+
+            </div>
+            <div class="um-slidein-footer" id="umPanelFooter">
+                <div class="um-footer-screen active" id="umFooterForm">
+                    <button class="btn-um-primary um-create-submit" id="umCreateSubmit" type="button">Create User</button>
+                </div>
+                <div class="um-footer-screen" id="umFooterWizard">
+                    <button class="btn-um-secondary" id="umWizardBack" type="button">Back</button>
+                    <button class="btn-um-primary" id="umWizardNext" type="button">Next</button>
+                </div>
+                <div class="um-footer-screen" id="umFooterDone">
+                    <button class="btn-um-primary um-footer-btn" id="umWizardDone" type="button" style="width:100%">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Created Success Modal -->
+    <div class="unsaved-modal-overlay" id="umSuccessModal">
+        <div class="unsaved-modal um-success-modal">
+            <div class="um-success-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h3 class="unsaved-modal-title">User Created Successfully</h3>
+            <p class="um-success-text">You can assign rights to this user now or do it later.</p>
+            <div class="unsaved-modal-actions">
+                <button class="unsaved-btn unsaved-btn-cancel" id="umSuccessLater">Later</button>
+                <button class="unsaved-btn um-success-assign-btn" id="umSuccessAssign">Assign Rights</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Confirmation Modal -->
+    <div class="unsaved-modal-overlay" id="umDeleteModal">
+        <div class="unsaved-modal">
+            <div class="unsaved-modal-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </div>
+            <h3 class="unsaved-modal-title">Delete User</h3>
+            <p class="unsaved-modal-text">Are you sure you want to delete <strong id="umDeleteUserName">—</strong>? This action cannot be undone.</p>
+            <div class="unsaved-modal-actions">
+                <button class="unsaved-btn unsaved-btn-cancel" id="umDeleteCancel">Cancel</button>
+                <button class="unsaved-btn unsaved-btn-discard" id="umDeleteConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Unsaved Changes Modal -->
     <div class="unsaved-modal-overlay" id="unsavedModal">

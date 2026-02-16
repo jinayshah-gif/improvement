@@ -552,6 +552,7 @@ function exportSelectedPDF() {
 // ==================== SEARCHABLE SELECT COMPONENT (MULTI-SELECT) ====================
 
 var filterInstances = {};
+var umFilterInstances = {};
 var FILTER_KEYS = ['module', 'subModule', 'action', 'actionBy', 'empName', 'actionFrom', 'payrollDate', 'logTime'];
 
 function SearchableSelect(el, onChange) {
@@ -840,9 +841,12 @@ SearchableSelect.prototype.clear = function () {
 
 SearchableSelect.prototype.open = function () {
     // Close any other open searchable selects first
-    for (var k in filterInstances) {
-        if (filterInstances.hasOwnProperty(k) && filterInstances[k] !== this && filterInstances[k].isOpen) {
-            filterInstances[k].close();
+    var allSets = [filterInstances, umFilterInstances];
+    for (var s = 0; s < allSets.length; s++) {
+        for (var k in allSets[s]) {
+            if (allSets[s].hasOwnProperty(k) && allSets[s][k] !== this && allSets[s][k].isOpen) {
+                allSets[s][k].close();
+            }
         }
     }
     this.isOpen = true;
@@ -1826,13 +1830,19 @@ function init() {
         }
         item.classList.add('active');
 
+        // Close UM submenu when navigating away from User Management
+        var umSidebar = document.getElementById('sidebarUserMgmt');
+        if (umSidebar && pageKey !== 'userManagement') {
+            umSidebar.classList.remove('open');
+        }
+
         for (var key in pageMap) {
             if (pageMap.hasOwnProperty(key)) {
                 pageMap[key].classList.toggle('active', key === pageKey);
             }
         }
 
-        if (window.innerWidth <= 1200) {
+        if (window.innerWidth <= 768) {
             sidebar.classList.remove('open');
             overlay.classList.remove('visible');
         }
@@ -1865,6 +1875,8 @@ function init() {
             e.preventDefault();
             var pageKey = this.getAttribute('data-page');
             if (!pageKey || !pageMap[pageKey]) return;
+            // User Management has its own handler
+            if (pageKey === 'userManagement') return;
 
             var self = this;
             // Check if leaving settings page with unsaved changes
@@ -1922,11 +1934,22 @@ function init() {
             sectionMap.configurations.classList.remove('active');
             sectionMap.salarySlip.classList.remove('active');
 
-            // Smooth-scroll to target sub-section within the container
+            // Smooth-scroll to center the target sub-section within the container
             var targetItem = mgmtItemMap[sectionKey];
             if (targetItem && mgmtScrollContainer) {
+                var containerH = mgmtScrollContainer.clientHeight;
+                var itemTop = targetItem.offsetTop - mgmtScrollContainer.offsetTop;
+                var itemH = targetItem.offsetHeight;
+                var scrollTarget;
+                if (itemH >= containerH) {
+                    // Section is taller than viewport — scroll to its top
+                    scrollTarget = itemTop;
+                } else {
+                    // Center the section vertically
+                    scrollTarget = itemTop - (containerH - itemH) / 2;
+                }
                 mgmtScrollContainer.scrollTo({
-                    top: targetItem.offsetTop - mgmtScrollContainer.offsetTop,
+                    top: Math.max(0, scrollTarget),
                     behavior: 'smooth'
                 });
             }
@@ -2069,6 +2092,49 @@ function init() {
         for (var si = 0; si < scrollItems.length; si++) {
             observer.observe(scrollItems[si]);
         }
+    })();
+
+    // --- Floating sticky header for current section ---
+    (function initFloatingHeader() {
+        if (!mgmtScrollContainer) return;
+        var fh = document.getElementById('mgmtFloatingHeader');
+        var fhTitle = document.getElementById('mgmtFhTitle');
+        var fhDesc = document.getElementById('mgmtFhDesc');
+        if (!fh || !fhTitle || !fhDesc) return;
+
+        var scrollItems = mgmtScrollContainer.querySelectorAll('.mgmt-scroll-item');
+        if (!scrollItems.length) return;
+
+        mgmtScrollContainer.addEventListener('scroll', function () {
+            var scrollTop = mgmtScrollContainer.scrollTop;
+            var currentItem = null;
+
+            // Find which section's header has scrolled past the top
+            for (var i = 0; i < scrollItems.length; i++) {
+                var item = scrollItems[i];
+                var itemTop = item.offsetTop - mgmtScrollContainer.offsetTop;
+                var header = item.querySelector('.mgmt-section-header');
+                var headerH = header ? header.offsetHeight : 0;
+
+                // If the section header has scrolled above the viewport
+                if (scrollTop > itemTop + headerH) {
+                    currentItem = item;
+                } else {
+                    break;
+                }
+            }
+
+            if (currentItem) {
+                var header = currentItem.querySelector('.mgmt-section-header');
+                var title = header ? header.querySelector('.mgmt-section-title') : null;
+                var desc = header ? header.querySelector('.mgmt-section-desc') : null;
+                fhTitle.textContent = title ? title.textContent : '';
+                fhDesc.textContent = desc ? desc.textContent : '';
+                fh.classList.add('visible');
+            } else {
+                fh.classList.remove('visible');
+            }
+        });
     })();
 
     // --- Logo Upload with Image Editor ---
@@ -3552,6 +3618,1618 @@ function init() {
             setTimeout(function () { printWin.print(); }, 300);
         });
     }
+
+    // ==================== USER MANAGEMENT ====================
+
+    // --- UM Seed Data ---
+    var umUsers = [
+        { id: 1, name: 'Nishil Shah', phone: '9876543210', email: 'nishil.shah@petpooja.com', phoneVerified: true, emailVerified: true, superAdmin: true, template: 'Admin Template' },
+        { id: 2, name: 'Developer Accounts 1', phone: '9876543211', email: 'developer1@petpooja.com', phoneVerified: true, emailVerified: true, superAdmin: true, template: 'Admin Template' },
+        { id: 3, name: 'Ayaz Maniar', phone: '9876543212', email: 'ayaz.maniar@petpooja.com', phoneVerified: true, emailVerified: false, superAdmin: false, template: 'Manager Template' },
+        { id: 4, name: 'Jinay Shah', phone: '9876543213', email: 'jinay.shah@petpooja.com', phoneVerified: true, emailVerified: true, superAdmin: false, template: 'Manager Template' },
+        { id: 5, name: 'Rahul Patel', phone: '9876543214', email: 'rahul.patel@petpooja.com', phoneVerified: false, emailVerified: false, superAdmin: false, template: '' },
+        { id: 6, name: 'Priya Sharma', phone: '9876543215', email: 'priya.sharma@petpooja.com', phoneVerified: true, emailVerified: true, superAdmin: false, template: 'Viewer Template' },
+        { id: 7, name: 'Amit Verma', phone: '9876543216', email: '', phoneVerified: true, emailVerified: false, superAdmin: false, template: '' },
+        { id: 8, name: 'Sneha Kapoor', phone: '9876543217', email: 'sneha.kapoor@petpooja.com', phoneVerified: true, emailVerified: true, superAdmin: false, template: 'Viewer Template' }
+    ];
+
+    // --- Generate 200 dummy users ---
+    var umFirstNames = ['Aarav', 'Aditi', 'Aditya', 'Akash', 'Aman', 'Ananya', 'Ankit', 'Anjali', 'Arjun', 'Bhavna', 'Chirag', 'Deepak', 'Disha', 'Gaurav', 'Harsh', 'Isha', 'Karan', 'Kavita', 'Kunal', 'Lakshmi', 'Mahesh', 'Manisha', 'Mohit', 'Nandini', 'Neha', 'Nikhil', 'Pallavi', 'Pankaj', 'Pooja', 'Rajesh', 'Ravi', 'Ritika', 'Rohit', 'Sakshi', 'Sanjay', 'Shivani', 'Shreya', 'Sunil', 'Swati', 'Tanvi', 'Tushar', 'Varun', 'Vidya', 'Vikram', 'Yash', 'Zara', 'Divya', 'Gaurang', 'Hemant', 'Jyoti'];
+    var umLastNames = ['Agarwal', 'Bansal', 'Chauhan', 'Desai', 'Gandhi', 'Gupta', 'Iyer', 'Jain', 'Joshi', 'Kapoor', 'Kumar', 'Malhotra', 'Mehta', 'Mishra', 'Nair', 'Pandey', 'Patel', 'Rao', 'Reddy', 'Shah', 'Sharma', 'Singh', 'Sinha', 'Tiwari', 'Verma', 'Yadav', 'Bhatt', 'Chopra', 'Dutta', 'Kulkarni'];
+    var umTemplatOptions = ['Admin Template', 'Manager Template', 'Viewer Template', ''];
+    var umDomains = ['petpooja.com', 'gmail.com', 'outlook.com', 'yahoo.com', 'company.in'];
+
+    for (var ui = 0; ui < 200; ui++) {
+        var fn = randomFrom(umFirstNames);
+        var ln = randomFrom(umLastNames);
+        var fullName = fn + ' ' + ln;
+        var phoneNum = '9' + String(Math.floor(100000000 + Math.random() * 900000000));
+        var hasEmail = Math.random() > 0.15;
+        var emailAddr = hasEmail ? (fn.toLowerCase() + '.' + ln.toLowerCase() + '@' + randomFrom(umDomains)) : '';
+        var pVerified = Math.random() > 0.25;
+        var eVerified = hasEmail ? Math.random() > 0.3 : false;
+        var isSuperAdmin = Math.random() < 0.05;
+        var tpl = isSuperAdmin ? 'Admin Template' : randomFrom(umTemplatOptions);
+
+        umUsers.push({
+            id: 9 + ui,
+            name: fullName,
+            phone: phoneNum,
+            email: emailAddr,
+            phoneVerified: pVerified,
+            emailVerified: eVerified,
+            superAdmin: isSuperAdmin,
+            template: tpl
+        });
+    }
+
+    var umAllUsers = umUsers.slice(); // keep full copy for filtering
+
+    // Generate 200 dummy templates
+    var umTemplates = [];
+    var templateTypes = ['Admin', 'Manager', 'Viewer', 'Editor', 'Analyst', 'Accountant', 'HR', 'Sales', 'Marketing', 'Support', 'Developer', 'Designer', 'Coordinator', 'Supervisor', 'Executive', 'Specialist', 'Consultant', 'Trainee', 'Intern', 'Lead'];
+    var templatePrefixes = ['Full', 'Limited', 'Senior', 'Junior', 'Regional', 'Branch', 'Department', 'Team', 'Project', 'Temporary', 'Permanent', 'Contract', 'Associate', 'Chief', 'Assistant', 'Head', 'Senior', 'Junior', 'Mid-Level', 'Entry-Level'];
+    var templateCreators = ['Nishil Shah', 'Ayaz Maniar', 'Hemanshu', 'Arjun', 'Developer Accounts 1', 'Developer Accounts 2', 'Admin User', 'System Admin', 'HR Manager', 'IT Manager'];
+
+    // Generate templates
+    for (var ti = 0; ti < 200; ti++) {
+        var tId = ti + 1;
+        var tName = '';
+
+        // Create varied template names
+        if (ti < 20) {
+            // First 20: Simple types
+            tName = templateTypes[ti % templateTypes.length] + ' Template';
+        } else if (ti < 60) {
+            // Next 40: Prefix + Type
+            var prefixIdx = Math.floor(Math.random() * templatePrefixes.length);
+            var typeIdx = Math.floor(Math.random() * templateTypes.length);
+            tName = templatePrefixes[prefixIdx] + ' ' + templateTypes[typeIdx];
+        } else if (ti < 120) {
+            // Next 60: Department/Role specific
+            var departments = ['Finance', 'HR', 'Sales', 'Marketing', 'Engineering', 'Operations', 'Support', 'Admin', 'IT', 'Legal'];
+            var roles = ['Read Only', 'Full Access', 'Limited Access', 'View Only', 'Edit Rights', 'Approval Rights', 'Basic', 'Advanced', 'Premium', 'Standard'];
+            tName = departments[ti % departments.length] + ' - ' + roles[Math.floor(Math.random() * roles.length)];
+        } else {
+            // Remaining: Combined variations
+            var combo1 = ['North', 'South', 'East', 'West', 'Central', 'Regional', 'Global', 'Local', 'Remote', 'On-site'];
+            var combo2 = ['Office', 'Branch', 'Division', 'Unit', 'Team', 'Department', 'Sector', 'Zone'];
+            var combo3 = templateTypes[Math.floor(Math.random() * templateTypes.length)];
+            tName = combo1[ti % combo1.length] + ' ' + combo2[Math.floor(Math.random() * combo2.length)] + ' ' + combo3;
+        }
+
+        // Generate realistic data
+        var rightsCount = Math.floor(Math.random() * 12) + 1; // 1-12 rights
+        var assignedPeople = ti < 10 ? Math.floor(Math.random() * 50) + 10 : Math.floor(Math.random() * 20); // Popular templates have more people
+        var createdBy = templateCreators[Math.floor(Math.random() * templateCreators.length)];
+
+        // Generate dates (created between 6 months ago and 2 years ago)
+        var daysAgo = Math.floor(Math.random() * 730) + 1; // 1-730 days ago
+        var createdDate = new Date();
+        createdDate.setDate(createdDate.getDate() - daysAgo);
+
+        // Last modified (between created date and now)
+        var modifiedDaysAgo = Math.floor(Math.random() * daysAgo);
+        var modifiedDate = new Date();
+        modifiedDate.setDate(modifiedDate.getDate() - modifiedDaysAgo);
+
+        // Modified by might be different from created by
+        var modifiedBy = Math.random() > 0.5 ? createdBy : templateCreators[Math.floor(Math.random() * templateCreators.length)];
+
+        umTemplates.push({
+            id: tId,
+            name: tName,
+            rightsCount: rightsCount,
+            assignedPeople: assignedPeople,
+            createdOn: createdDate,
+            lastModified: modifiedDate,
+            createdBy: createdBy,
+            modifiedBy: modifiedBy
+        });
+    }
+
+    // Keep full copy for filtering
+    umAllTemplates = umTemplates.slice();
+
+    var umNextId = 209;
+    var umCurrentPage = 1;
+    var umPageSize = 10;
+    var umActiveDropdown = null;
+    var umLastCreatedUser = null;
+
+    // --- Template Pagination ---
+    var umTemplateCurrentPage = 1;
+    var umTemplatePageSize = 10;
+
+    // --- Template Filter State ---
+    var umTemplateFilters = {
+        templateName: []
+    };
+    var umTemplateFilterInstances = {};
+
+    // --- UM Filter State ---
+    var UM_FILTER_KEYS = ['name', 'phone', 'email', 'superAdmin', 'template'];
+    var umActiveFilters = {};
+
+    // --- UM DOM Elements ---
+    var umPageEl = document.getElementById('pageUserManagement');
+    var umViewManageUsers = document.getElementById('umViewManageUsers');
+    var umViewAssignRights = document.getElementById('umViewAssignRights');
+    var umViewManageTemplates = document.getElementById('umViewManageTemplates');
+    var umTableBody = document.getElementById('umTableBody');
+    var umUserCount = document.getElementById('umUserCount');
+    var umTabUserCount = document.getElementById('umTabUserCount');
+    var umTabTemplateCount = document.getElementById('umTabTemplateCount');
+    var umPaginationInfo = document.getElementById('umPaginationInfo');
+    var umPageButtons = document.getElementById('umPageButtons');
+
+    // --- UM Sidebar Navigation ---
+    var sidebarUserMgmt = document.getElementById('sidebarUserMgmt');
+
+    // Add userManagement to page map
+    pageMap.userManagement = umPageEl;
+
+    // Handle sidebar User Management click (direct navigation, no submenu)
+    if (sidebarUserMgmt) {
+        sidebarUserMgmt.querySelector('.sidebar-link').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Navigate to User Management page
+            var allItems = document.querySelectorAll('.sidebar-item');
+            for (var j = 0; j < allItems.length; j++) {
+                allItems[j].classList.remove('active');
+            }
+            sidebarUserMgmt.classList.add('active');
+
+            for (var key in pageMap) {
+                if (pageMap.hasOwnProperty(key)) {
+                    pageMap[key].classList.toggle('active', key === 'userManagement');
+                }
+            }
+
+            // Show Users tab by default
+            umSwitchTab('users');
+
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+        });
+    }
+
+    // --- UM Tab Switching ---
+    function umSwitchTab(tabName) {
+        // Update tab buttons
+        var allTabs = document.querySelectorAll('.um-tab');
+        for (var i = 0; i < allTabs.length; i++) {
+            var tab = allTabs[i];
+            var isActive = tab.getAttribute('data-um-tab') === tabName;
+            if (isActive) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        }
+
+        // Update tab panels
+        var allPanels = document.querySelectorAll('.um-tab-panel');
+        for (var j = 0; j < allPanels.length; j++) {
+            allPanels[j].classList.remove('active');
+        }
+
+        if (tabName === 'users') {
+            document.getElementById('umPanelUsers').classList.add('active');
+            umRenderTable(); // Render users when tab is opened
+        } else if (tabName === 'templates') {
+            document.getElementById('umPanelTemplates').classList.add('active');
+            umRenderTemplateTable(); // Render templates when tab is opened
+        }
+    }
+
+    // Handle tab clicks
+    var umTabUsers = document.getElementById('umTabUsers');
+    var umTabTemplates = document.getElementById('umTabTemplates');
+
+    if (umTabUsers) {
+        umTabUsers.addEventListener('click', function () {
+            umSwitchTab('users');
+        });
+    }
+
+    if (umTabTemplates) {
+        umTabTemplates.addEventListener('click', function () {
+            umSwitchTab('templates');
+        });
+    }
+
+    // --- UM View Switcher ---
+    function umShowView(view) {
+        var umViewManageUsers = document.getElementById('umViewManageUsers');
+        var umViewAssignRights = document.getElementById('umViewAssignRights');
+
+        if (!umViewManageUsers || !umViewAssignRights) return;
+
+        umViewManageUsers.classList.remove('active');
+        umViewAssignRights.classList.remove('active');
+
+        if (view === 'manageUsers') {
+            umViewManageUsers.classList.add('active');
+            umSwitchTab('users');
+            umRenderTable();
+        } else if (view === 'assignRights') {
+            umViewAssignRights.classList.add('active');
+        } else if (view === 'manageTemplates') {
+            // Switch to templates tab
+            umSwitchTab('templates');
+        }
+    }
+
+    // --- UM Get Filtered Data ---
+    function umGetFilteredData() {
+        var data = umAllUsers.slice();
+        for (var key in umActiveFilters) {
+            if (!umActiveFilters.hasOwnProperty(key)) continue;
+            if (!umActiveFilters[key] || umActiveFilters[key].length === 0) continue;
+            var filterVals = umActiveFilters[key];
+            var temp = [];
+            for (var i = 0; i < data.length; i++) {
+                var rowVal = umGetFilterValue(data[i], key);
+                for (var f = 0; f < filterVals.length; f++) {
+                    if (rowVal.toLowerCase() === filterVals[f].toLowerCase()) {
+                        temp.push(data[i]);
+                        break;
+                    }
+                }
+            }
+            data = temp;
+        }
+        return data;
+    }
+
+    function umGetFilterValue(user, key) {
+        if (key === 'superAdmin') return user.superAdmin ? 'Yes' : 'No';
+        if (key === 'template') return user.template || 'Not Assigned';
+        return user[key] || '—';
+    }
+
+    // --- UM Render Users Table ---
+    function umRenderTable() {
+        umUsers = umGetFilteredData();
+        var total = umUsers.length;
+        var totalPages = Math.ceil(total / umPageSize);
+        if (umCurrentPage > totalPages) umCurrentPage = totalPages;
+        if (umCurrentPage < 1) umCurrentPage = 1;
+
+        var start = (umCurrentPage - 1) * umPageSize;
+        var end = Math.min(start + umPageSize, total);
+        var pageData = umUsers.slice(start, end);
+
+        umUserCount.textContent = total;
+        if (umTabUserCount) {
+            umTabUserCount.textContent = umAllUsers.length;
+        }
+
+        var html = '';
+        for (var i = 0; i < pageData.length; i++) {
+            var u = pageData[i];
+
+            var phoneLabel = u.phoneVerified
+                ? '<span class="um-status-label verified">Verified</span>'
+                : '<span class="um-status-label not-verified">Not Verified</span>';
+
+            var emailLabel = '';
+            if (u.email) {
+                emailLabel = u.emailVerified
+                    ? '<span class="um-status-label verified">Verified</span>'
+                    : '<span class="um-status-label not-verified">Not Verified</span>';
+            }
+
+            var superBadge = u.superAdmin
+                ? '<span class="um-super-pill">Super Admin</span>'
+                : '';
+
+            var templateText = u.template
+                ? '<span class="um-template-text">' + esc(u.template) + '</span>'
+                : '<span class="um-template-text none">Not Assigned</span>';
+
+            html += '<tr data-user-id="' + u.id + '">' +
+                '<td><div class="um-name-cell"><span class="um-user-name">' + esc(u.name) + '</span>' + superBadge + '</div></td>' +
+                '<td><div class="um-cell-stack">' + esc(u.phone) + phoneLabel + '</div></td>' +
+                '<td class="um-col-email">' + (u.email ? '<div class="um-cell-stack">' + esc(u.email) + emailLabel + '</div>' : '<span style="color:#9ca3af">\u2014</span>') + '</td>' +
+                '<td class="um-col-template">' + templateText + '</td>' +
+                '<td class="um-col-action"><div class="um-action-cell">' +
+                    '<div class="um-action-menu">' +
+                        '<button class="um-action-dots" data-user-id="' + u.id + '">' +
+                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>' +
+                        '</button>' +
+                        '<div class="um-action-dropdown" id="umDropdown_' + u.id + '">' +
+                            '<button class="um-action-dropdown-item" data-action="rights" data-user-id="' + u.id + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Edit Rights</button>' +
+                            '<button class="um-action-dropdown-item" data-action="edit" data-user-id="' + u.id + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Edit User</button>' +
+                            '<button class="um-action-dropdown-item danger" data-action="delete" data-user-id="' + u.id + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>Delete User</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div></td>' +
+                '</tr>';
+        }
+        umTableBody.innerHTML = html;
+
+        // Pagination info
+        if (total === 0) {
+            umPaginationInfo.innerHTML = 'No users found';
+        } else {
+            umPaginationInfo.innerHTML = 'Showing <span class="pagination-highlight">' + (start + 1) + '</span> to <span class="pagination-highlight">' + end + '</span> of <span class="pagination-highlight">' + total + '</span> Results';
+        }
+
+        // Pagination buttons (reuse getPageRange from Activity Logs)
+        var pHtml = '';
+        if (totalPages > 0) {
+            pHtml += '<button class="page-btn prev-btn"' + (umCurrentPage === 1 ? ' disabled' : '') + ' data-um-page="' + (umCurrentPage - 1) + '">Previous</button>';
+            var pages = getPageRange(umCurrentPage, totalPages);
+            for (var p = 0; p < pages.length; p++) {
+                if (pages[p] === '...') {
+                    pHtml += '<span class="page-ellipsis">...</span>';
+                } else {
+                    pHtml += '<button class="page-btn' + (pages[p] === umCurrentPage ? ' active' : '') + '" data-um-page="' + pages[p] + '">' + pages[p] + '</button>';
+                }
+            }
+            pHtml += '<button class="page-btn next-btn"' + (umCurrentPage === totalPages ? ' disabled' : '') + ' data-um-page="' + (umCurrentPage + 1) + '">Next</button>';
+        }
+        umPageButtons.innerHTML = pHtml;
+    }
+
+    // UM Pagination clicks
+    if (umPageButtons) {
+        umPageButtons.addEventListener('click', function (e) {
+            var btn = e.target.closest('.page-btn');
+            if (!btn || btn.disabled) return;
+            var p = parseInt(btn.getAttribute('data-um-page'), 10);
+            if (p >= 1) {
+                umCurrentPage = p;
+                umRenderTable();
+            }
+        });
+    }
+
+    // UM Page Size selector
+    var umPageSizeSelect = document.getElementById('umPageSizeSelect');
+    if (umPageSizeSelect) {
+        umPageSizeSelect.addEventListener('change', function () {
+            umPageSize = parseInt(this.value, 10);
+            umCurrentPage = 1;
+            umRenderTable();
+        });
+    }
+
+    // --- UM Filter System ---
+    function umUpdateFilterOptions() {
+        for (var k = 0; k < UM_FILTER_KEYS.length; k++) {
+            var currentKey = UM_FILTER_KEYS[k];
+
+            // Cross-filter: apply all OTHER active filters
+            var data = umAllUsers.slice();
+            for (var filterKey in umActiveFilters) {
+                if (!umActiveFilters.hasOwnProperty(filterKey)) continue;
+                if (!umActiveFilters[filterKey] || umActiveFilters[filterKey].length === 0) continue;
+                if (filterKey === currentKey) continue;
+                var fVals = umActiveFilters[filterKey];
+                var temp = [];
+                for (var i = 0; i < data.length; i++) {
+                    var rv = umGetFilterValue(data[i], filterKey).toLowerCase();
+                    for (var f = 0; f < fVals.length; f++) {
+                        if (rv === fVals[f].toLowerCase()) { temp.push(data[i]); break; }
+                    }
+                }
+                data = temp;
+            }
+
+            // Collect unique values + counts
+            var counts = {};
+            for (var j = 0; j < data.length; j++) {
+                var val = umGetFilterValue(data[j], currentKey);
+                if (val && val !== '—') {
+                    counts[val] = (counts[val] || 0) + 1;
+                }
+            }
+
+            var opts = [];
+            var sortedKeys = Object.keys(counts).sort();
+            for (var m = 0; m < sortedKeys.length; m++) {
+                opts.push({ value: sortedKeys[m], count: counts[sortedKeys[m]] });
+            }
+
+            if (umFilterInstances[currentKey]) {
+                umFilterInstances[currentKey].setOptions(opts);
+            }
+        }
+    }
+
+    function umOnFilterChange() {
+        umActiveFilters = {};
+        for (var i = 0; i < UM_FILTER_KEYS.length; i++) {
+            var key = UM_FILTER_KEYS[i];
+            var vals = umFilterInstances[key] ? umFilterInstances[key].getValues() : [];
+            if (vals.length > 0) umActiveFilters[key] = vals;
+        }
+        umUpdateFilterBadge();
+        umUpdateFilterOptions();
+        umCurrentPage = 1;
+        umRenderTable();
+    }
+
+    function umUpdateFilterBadge() {
+        var count = 0;
+        for (var key in umActiveFilters) {
+            if (umActiveFilters.hasOwnProperty(key)) {
+                count += umActiveFilters[key].length;
+            }
+        }
+        var badge = document.getElementById('umFilterBadge');
+        var clearActions = document.querySelector('#umFilterPanel .filter-actions');
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = '';
+            if (clearActions) clearActions.classList.add('visible');
+        } else {
+            badge.style.display = 'none';
+            if (clearActions) clearActions.classList.remove('visible');
+        }
+    }
+
+    // Init UM searchable selects
+    (function initUmFilters() {
+        var containers = document.querySelectorAll('.searchable-select.um-filter');
+        for (var i = 0; i < containers.length; i++) {
+            var el = containers[i];
+            var key = el.getAttribute('data-um-key');
+            // Temporarily set data-key for SearchableSelect constructor
+            el.setAttribute('data-key', key);
+            var ss = new SearchableSelect(el, umOnFilterChange);
+            umFilterInstances[key] = ss;
+        }
+        umUpdateFilterOptions();
+    })();
+
+    // UM Filter toggle button
+    var umFilterToggleBtn = document.getElementById('umFilterToggleBtn');
+    var umFilterPanel = document.getElementById('umFilterPanel');
+    if (umFilterToggleBtn && umFilterPanel) {
+        umFilterToggleBtn.addEventListener('click', function () {
+            umFilterPanel.classList.toggle('open');
+        });
+    }
+
+    // UM Clear all filters
+    var umClearFiltersBtn = document.getElementById('umClearFiltersBtn');
+    if (umClearFiltersBtn) {
+        umClearFiltersBtn.addEventListener('click', function () {
+            umActiveFilters = {};
+            for (var key in umFilterInstances) {
+                if (umFilterInstances.hasOwnProperty(key)) {
+                    umFilterInstances[key].clear();
+                }
+            }
+            umUpdateFilterBadge();
+            umUpdateFilterOptions();
+            umCurrentPage = 1;
+            umRenderTable();
+        });
+    }
+
+    // --- UM Render Templates Table ---
+    function umRenderTemplateTable() {
+        var tbody = document.getElementById('umTemplateTableBody');
+        var countEl = document.getElementById('umTemplateCount');
+        var paginationInfo = document.getElementById('umTemplatePaginationInfo');
+        var pageButtons = document.getElementById('umTemplatePageButtons');
+
+        if (!tbody) return;
+
+        // Apply filters
+        var filteredTemplates = umAllTemplates.filter(function(t) {
+            var nameMatch = !umTemplateFilters.templateName || umTemplateFilters.templateName.length === 0 ||
+                umTemplateFilters.templateName.indexOf(t.name) !== -1;
+
+            return nameMatch;
+        });
+
+        // Pagination calculation
+        var total = filteredTemplates.length;
+        var totalPages = Math.ceil(total / umTemplatePageSize);
+        if (umTemplateCurrentPage > totalPages) umTemplateCurrentPage = totalPages;
+        if (umTemplateCurrentPage < 1) umTemplateCurrentPage = 1;
+
+        var start = (umTemplateCurrentPage - 1) * umTemplatePageSize;
+        var end = Math.min(start + umTemplatePageSize, total);
+        var pageData = filteredTemplates.slice(start, end);
+
+        // Update count
+        if (countEl) {
+            countEl.textContent = total;
+        }
+        if (umTabTemplateCount) {
+            umTabTemplateCount.textContent = umAllTemplates.length;
+        }
+
+        var html = '';
+        for (var i = 0; i < pageData.length; i++) {
+            var t = pageData[i];
+
+            // Format dates with enhanced display
+            var createdDate = t.createdOn;
+            var modifiedDate = t.lastModified;
+
+            var formatDateCell = function(date, userName) {
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var d = new Date(date);
+                var day = d.getDate();
+                var month = months[d.getMonth()];
+                var year = d.getFullYear();
+                var hours = d.getHours();
+                var minutes = d.getMinutes();
+                var ampm = hours >= 12 ? 'PM' : 'AM';
+                var h12 = hours % 12;
+                if (h12 === 0) h12 = 12;
+                var formattedTime = h12 + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+                var dateStr = day + ' ' + month + ' ' + year;
+
+                return '<div class="um-datetime-cell">' +
+                       '<div class="um-datetime-date">' + dateStr + ', <span class="um-datetime-time">' + formattedTime + '</span></div>' +
+                       '<span class="um-datetime-user">' +
+                           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' +
+                           '<span class="um-datetime-user-label">By</span> ' +
+                           '<span class="um-datetime-user-name">' + esc(userName) + '</span>' +
+                       '</span>' +
+                   '</div>';
+            };
+
+            var createdStr = formatDateCell(createdDate, t.createdBy);
+            var modifiedStr = formatDateCell(modifiedDate, t.modifiedBy || t.createdBy);
+
+            html += '<tr>' +
+                '<td><span class="um-user-name">' + esc(t.name) + '</span></td>' +
+                '<td>' + t.assignedPeople + '</td>' +
+                '<td>' + createdStr + '</td>' +
+                '<td>' + modifiedStr.replace(' By ' + esc(t.createdBy), ' By ' + esc(t.createdBy)) + '</td>' +
+                '<td class="um-col-action"><div class="um-action-cell">' +
+                    '<button class="um-action-dots" data-template-id="' + t.id + '"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg></button>' +
+                    '<div class="um-action-dropdown" id="umTemplateDropdown_' + t.id + '">' +
+                        '<div class="um-action-dropdown-item" data-action="edit" data-template-id="' + t.id + '">' +
+                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' +
+                            'Edit' +
+                        '</div>' +
+                        '<div class="um-action-dropdown-item um-delete-item" data-action="delete" data-template-id="' + t.id + '">' +
+                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>' +
+                            'Delete' +
+                        '</div>' +
+                    '</div>' +
+                '</div></td>' +
+                '</tr>';
+        }
+        tbody.innerHTML = html;
+
+        // Pagination info
+        if (paginationInfo) {
+            if (total === 0) {
+                paginationInfo.innerHTML = 'No templates found';
+            } else {
+                paginationInfo.innerHTML = 'Showing <span class="pagination-highlight">' + (start + 1) + '</span> to <span class="pagination-highlight">' + end + '</span> of <span class="pagination-highlight">' + total + '</span> Results';
+            }
+        }
+
+        // Pagination buttons
+        if (pageButtons) {
+            var pHtml = '';
+            if (totalPages > 0) {
+                pHtml += '<button class="page-btn prev-btn"' + (umTemplateCurrentPage === 1 ? ' disabled' : '') + ' data-template-page="' + (umTemplateCurrentPage - 1) + '">Previous</button>';
+                var pages = getPageRange(umTemplateCurrentPage, totalPages);
+                for (var p = 0; p < pages.length; p++) {
+                    if (pages[p] === '...') {
+                        pHtml += '<span class="page-ellipsis">...</span>';
+                    } else {
+                        pHtml += '<button class="page-btn' + (pages[p] === umTemplateCurrentPage ? ' active' : '') + '" data-template-page="' + pages[p] + '">' + pages[p] + '</button>';
+                    }
+                }
+                pHtml += '<button class="page-btn next-btn"' + (umTemplateCurrentPage === totalPages ? ' disabled' : '') + ' data-template-page="' + (umTemplateCurrentPage + 1) + '">Next</button>';
+            }
+            pageButtons.innerHTML = pHtml;
+        }
+    }
+
+    // --- UM Template Table Event Delegation ---
+    var umTemplateTableBody = document.getElementById('umTemplateTableBody');
+    var umActiveTemplateDropdown = null;
+
+    if (umTemplateTableBody) {
+        umTemplateTableBody.addEventListener('click', function (e) {
+            // Close any open dropdown
+            var existingOpen = document.querySelector('.um-action-dropdown.open');
+
+            // 3-dot menu click
+            var dotsBtn = e.target.closest('.um-action-dots');
+            if (dotsBtn) {
+                e.stopPropagation();
+                var templateId = dotsBtn.getAttribute('data-template-id');
+                var dropdown = document.getElementById('umTemplateDropdown_' + templateId);
+                if (existingOpen && existingOpen !== dropdown) {
+                    existingOpen.classList.remove('open');
+                }
+                if (dropdown) {
+                    dropdown.classList.toggle('open');
+                    umActiveTemplateDropdown = dropdown.classList.contains('open') ? dropdown : null;
+                }
+                return;
+            }
+
+            // Dropdown item click
+            var dropItem = e.target.closest('.um-action-dropdown-item');
+            if (dropItem) {
+                e.stopPropagation();
+                var action = dropItem.getAttribute('data-action');
+                var tid = parseInt(dropItem.getAttribute('data-template-id'), 10);
+                if (existingOpen) existingOpen.classList.remove('open');
+                umActiveTemplateDropdown = null;
+
+                if (action === 'delete') {
+                    // Show delete confirmation
+                    var template = umTemplates.find(function(t) { return t.id === tid; });
+                    if (template && confirm('Are you sure you want to delete the template "' + template.name + '"?')) {
+                        // Remove template
+                        umTemplates = umTemplates.filter(function(t) { return t.id !== tid; });
+                        umRenderTemplateTable();
+                        umShowToast('Template deleted successfully');
+                    }
+                } else if (action === 'edit') {
+                    // Edit template (you can implement this later)
+                    umShowToast('Edit template feature coming soon!');
+                }
+                return;
+            }
+        });
+    }
+
+    // Template Pagination clicks
+    var umTemplatePageButtons = document.getElementById('umTemplatePageButtons');
+    if (umTemplatePageButtons) {
+        umTemplatePageButtons.addEventListener('click', function (e) {
+            var btn = e.target.closest('.page-btn');
+            if (!btn || btn.disabled) return;
+            var p = parseInt(btn.getAttribute('data-template-page'), 10);
+            if (p >= 1) {
+                umTemplateCurrentPage = p;
+                umRenderTemplateTable();
+            }
+        });
+    }
+
+    // Template Page Size selector
+    var umTemplatePageSizeSelect = document.getElementById('umTemplatePageSizeSelect');
+    if (umTemplatePageSizeSelect) {
+        umTemplatePageSizeSelect.addEventListener('change', function () {
+            umTemplatePageSize = parseInt(this.value, 10);
+            umTemplateCurrentPage = 1;
+            umRenderTemplateTable();
+        });
+    }
+
+    // --- Template Filter Toggle ---
+    var umTemplateFilterToggleBtn = document.getElementById('umTemplateFilterToggleBtn');
+    var umTemplateFilterPanel = document.getElementById('umTemplateFilterPanel');
+    if (umTemplateFilterToggleBtn && umTemplateFilterPanel) {
+        umTemplateFilterToggleBtn.addEventListener('click', function () {
+            umTemplateFilterPanel.classList.toggle('open');
+        });
+    }
+
+    // --- Template Filter Change Handler ---
+    function umOnTemplateFilterChange(key, values) {
+        umTemplateFilters[key] = values;
+        umTemplateCurrentPage = 1;
+
+        // Update filter badge
+        var activeCount = 0;
+        if (umTemplateFilters.templateName && umTemplateFilters.templateName.length > 0) {
+            activeCount = 1;
+        }
+
+        var badge = document.getElementById('umTemplateFilterBadge');
+        if (badge) {
+            if (activeCount > 0) {
+                badge.textContent = activeCount;
+                badge.style.display = '';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        umRenderTemplateTable();
+        umUpdateTemplateFilterOptions();
+    }
+
+    // --- Update Template Filter Options ---
+    function umUpdateTemplateFilterOptions() {
+        // Get unique template names
+        var nameSet = {};
+        for (var i = 0; i < umAllTemplates.length; i++) {
+            nameSet[umAllTemplates[i].name] = true;
+        }
+        var names = Object.keys(nameSet).sort();
+
+        // Update templateName filter
+        if (umTemplateFilterInstances.templateName) {
+            umTemplateFilterInstances.templateName.setOptions(names);
+        }
+    }
+
+    // --- Initialize Template Filters ---
+    (function initTemplateFilters() {
+        var containers = document.querySelectorAll('.searchable-select.um-filter');
+        for (var i = 0; i < containers.length; i++) {
+            var el = containers[i];
+            var key = el.getAttribute('data-um-key');
+            if (key) {
+                // Temporarily set data-key for SearchableSelect constructor
+                el.setAttribute('data-key', key);
+                var ss = new SearchableSelect(el, umOnTemplateFilterChange);
+                umTemplateFilterInstances[key] = ss;
+            }
+        }
+        umUpdateTemplateFilterOptions();
+    })();
+
+    // --- Clear Template Filters ---
+    var umTemplateClearFiltersBtn = document.getElementById('umTemplateClearFiltersBtn');
+    if (umTemplateClearFiltersBtn) {
+        umTemplateClearFiltersBtn.addEventListener('click', function () {
+            for (var key in umTemplateFilterInstances) {
+                if (umTemplateFilterInstances.hasOwnProperty(key)) {
+                    umTemplateFilterInstances[key].clear();
+                }
+            }
+            umOnTemplateFilterChange('templateName', []);
+        });
+    }
+
+    // --- UM Table Event Delegation ---
+    var umTableBody = document.getElementById('umTableBody');
+    var umActiveDropdown = null;
+
+    if (umTableBody) {
+        umTableBody.addEventListener('click', function (e) {
+            // Close any open dropdown
+            var existingOpen = document.querySelector('.um-action-dropdown.open');
+
+            // 3-dot menu click
+            var dotsBtn = e.target.closest('.um-action-dots');
+            if (dotsBtn) {
+                e.stopPropagation();
+                var userId = dotsBtn.getAttribute('data-user-id');
+                var dropdown = document.getElementById('umDropdown_' + userId);
+                if (existingOpen && existingOpen !== dropdown) {
+                    existingOpen.classList.remove('open');
+                }
+                if (dropdown) {
+                    dropdown.classList.toggle('open');
+                    umActiveDropdown = dropdown.classList.contains('open') ? dropdown : null;
+                }
+                return;
+            }
+
+            // Dropdown item click
+            var dropItem = e.target.closest('.um-action-dropdown-item');
+            if (dropItem) {
+                e.stopPropagation();
+                var action = dropItem.getAttribute('data-action');
+                var uid = parseInt(dropItem.getAttribute('data-user-id'), 10);
+                if (existingOpen) existingOpen.classList.remove('open');
+                umActiveDropdown = null;
+
+                if (action === 'delete') {
+                    umShowDeleteModal(uid);
+                } else if (action === 'rights') {
+                    umOpenAssignRights(uid);
+                } else if (action === 'edit') {
+                    umOpenEditPanel(uid);
+                }
+                return;
+            }
+        });
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function () {
+        if (umActiveDropdown) {
+            umActiveDropdown.classList.remove('open');
+            umActiveDropdown = null;
+        }
+        if (umActiveTemplateDropdown) {
+            umActiveTemplateDropdown.classList.remove('open');
+            umActiveTemplateDropdown = null;
+        }
+    });
+
+    // --- Create / Edit User ---
+    var umCreateOverlay = document.getElementById('umCreateOverlay');
+    var umCreateClose = document.getElementById('umCreateClose');
+    var umCreateSubmit = document.getElementById('umCreateSubmit');
+    var umCreateUserBtn = document.getElementById('umCreateUserBtn');
+    var umPanelTitle = document.getElementById('umPanelTitle');
+    var umEditingUserId = null;
+    var umWantAssignRights = false;
+    var umWizardPopulated = false;
+    var umCurrentScreen = 'form';
+    var umEditRightsMode = false; // True when editing rights only (from table 3-dot menu)
+
+    // --- Panel Screen Management ---
+    function umShowPanelScreen(screenName) {
+        umCurrentScreen = screenName;
+        var screenMap = {
+            'form': 'umScreenForm', 'wizard-1': 'umScreenWizard1', 'wizard-2': 'umScreenWizard2',
+            'wizard-3': 'umScreenWizard3', 'wizard-summary': 'umScreenWizardSummary', 'done': 'umScreenDone'
+        };
+        var footerMap = {
+            'form': 'umFooterForm', 'wizard-1': 'umFooterWizard', 'wizard-2': 'umFooterWizard',
+            'wizard-3': 'umFooterWizard', 'wizard-summary': 'umFooterWizard', 'done': 'umFooterDone'
+        };
+        var titleMap = {
+            'form': umEditingUserId !== null ? 'Edit User' : 'Create User',
+            'wizard-1': umEditRightsMode ? 'Edit Rights' : 'Assign Rights',
+            'wizard-2': umEditRightsMode ? 'Edit Rights' : 'Assign Rights',
+            'wizard-3': umEditRightsMode ? 'Edit Rights' : 'Assign Rights',
+            'wizard-summary': umEditRightsMode ? 'Review & Save' : 'Review & Create',
+            'done': ''
+        };
+
+        var allScreens = document.querySelectorAll('#umCreatePanel .um-panel-screen');
+        for (var i = 0; i < allScreens.length; i++) allScreens[i].classList.remove('active');
+        var target = document.getElementById(screenMap[screenName]);
+        if (target) target.classList.add('active');
+
+        var allFooters = document.querySelectorAll('.um-footer-screen');
+        for (var i = 0; i < allFooters.length; i++) allFooters[i].classList.remove('active');
+        var tf = document.getElementById(footerMap[screenName]);
+        if (tf) tf.classList.add('active');
+
+        umPanelTitle.textContent = titleMap[screenName];
+
+        // Update Next button text on summary screen
+        var nextBtn = document.getElementById('umWizardNext');
+        if (nextBtn) {
+            if (screenName === 'wizard-summary') {
+                nextBtn.textContent = umEditRightsMode ? 'Save Rights' : 'Create User';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        // Hide Back button on step 1, or in edit rights mode on step 1
+        var backBtn = document.getElementById('umWizardBack');
+        if (backBtn) {
+            if (screenName === 'wizard-1') {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = '';
+            }
+        }
+
+        // Hide "Modify User Details" buttons when in edit rights mode (no user details to modify)
+        var modifyLinks = document.querySelectorAll('.um-wizard-modify-link');
+        for (var i = 0; i < modifyLinks.length; i++) {
+            modifyLinks[i].style.display = umEditRightsMode ? 'none' : '';
+        }
+
+        // Update template indicator when entering step 3
+        if (screenName === 'wizard-3') umUpdateTemplateIndicator();
+
+        // Scroll body to top
+        var body = document.querySelector('#umCreatePanel .um-slidein-body');
+        if (body) body.scrollTop = 0;
+    }
+
+    // --- Populate wizard checklists ---
+    function umPopulateWizardChecklists() {
+        if (umWizardPopulated) return;
+        var lists = [
+            { src: '#umBranchList input[type="checkbox"]', attr: 'data-branch', dest: 'umWizardBranchList', wAttr: 'data-wizard-branch' },
+            { src: '#umDeptList input[type="checkbox"]', attr: 'data-dept', dest: 'umWizardDeptList', wAttr: 'data-wizard-dept' },
+            { src: '#umRightsList input[type="checkbox"]', attr: 'data-right', dest: 'umWizardRightsList', wAttr: 'data-wizard-right' }
+        ];
+        for (var l = 0; l < lists.length; l++) {
+            var boxes = document.querySelectorAll(lists[l].src);
+            var html = '';
+            for (var i = 0; i < boxes.length; i++) {
+                var lbl = boxes[i].closest('.um-rights-checkbox');
+                html += '<label class="um-rights-checkbox"><input type="checkbox" ' + lists[l].wAttr + '="' + esc(boxes[i].getAttribute(lists[l].attr)) + '"><span class="checkbox-custom"></span>' + esc(lbl.textContent.trim()) + '</label>';
+            }
+            document.getElementById(lists[l].dest).innerHTML = html;
+        }
+        umWizardPopulated = true;
+        // Re-setup rights checkbox listener since DOM was replaced
+        umSetupRightsCheckboxListener();
+        // Update initial counts
+        umUpdateWizardCount('umWizardBranchList', 'umWizardBranchCount');
+        umUpdateWizardCount('umWizardDeptList', 'umWizardDeptCount');
+        umUpdateWizardCount('umWizardRightsList', 'umWizardRightsCount');
+    }
+
+    // --- Read wizard selections ---
+    function umReadWizardSelections() {
+        var result = { branches: [], departments: [], rights: [], template: '', isCustom: false };
+        var bBoxes = document.querySelectorAll('#umWizardBranchList input:checked');
+        for (var i = 0; i < bBoxes.length; i++) result.branches.push(bBoxes[i].closest('.um-rights-checkbox').textContent.trim());
+        var dBoxes = document.querySelectorAll('#umWizardDeptList input:checked');
+        for (var i = 0; i < dBoxes.length; i++) result.departments.push(dBoxes[i].closest('.um-rights-checkbox').textContent.trim());
+        var rBoxes = document.querySelectorAll('#umWizardRightsList input:checked');
+        for (var i = 0; i < rBoxes.length; i++) result.rights.push(rBoxes[i].closest('.um-rights-checkbox').textContent.trim());
+        var tplEl = document.getElementById('umWizardTemplateDropdown');
+        if (tplEl && tplEl.value && tplEl.value !== '' && tplEl.value !== 'custom') {
+            result.template = tplEl.options[tplEl.selectedIndex].text;
+        } else if (result.rights.length > 0) {
+            result.isCustom = true;
+        }
+        return result;
+    }
+
+    // --- Build wizard summary with edit buttons ---
+    function umBuildWizardSummary() {
+        var el = document.getElementById('umWizardSummaryContent');
+        if (!el) return;
+        var sel = umReadWizardSelections();
+        var name = document.getElementById('umNewUserName').value.trim();
+        var phone = document.getElementById('umNewUserPhone').value.trim();
+        var email = document.getElementById('umNewUserEmail').value.trim();
+
+        var html = '';
+
+        // User Details Section (only show when creating user, not when editing rights only)
+        if (!umEditRightsMode) {
+            html += '<div class="um-wizard-summary-group">';
+            html += '<div class="um-wizard-summary-header"><span class="um-wizard-summary-label">User Details</span>';
+            html += '<button type="button" class="um-wizard-summary-edit" data-edit-screen="form"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button></div>';
+            html += '<div class="um-wizard-summary-user-details">';
+            html += '<div class="um-wizard-summary-detail"><span class="um-summary-detail-label">Name:</span><span class="um-summary-detail-value">' + esc(name) + '</span></div>';
+            html += '<div class="um-wizard-summary-detail"><span class="um-summary-detail-label">Phone:</span><span class="um-summary-detail-value">' + esc(phone) + '</span></div>';
+            if (email) {
+                html += '<div class="um-wizard-summary-detail"><span class="um-summary-detail-label">Email:</span><span class="um-summary-detail-value">' + esc(email) + '</span></div>';
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+
+        // Branches
+        html += '<div class="um-wizard-summary-group">';
+        html += '<div class="um-wizard-summary-header"><span class="um-wizard-summary-label">Branches</span>';
+        html += '<button type="button" class="um-wizard-summary-edit" data-edit-screen="wizard-1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button></div>';
+        if (sel.branches.length) {
+            html += '<div class="um-wizard-summary-chips">';
+            for (var i = 0; i < sel.branches.length; i++) html += '<span class="um-wizard-chip">' + esc(sel.branches[i]) + '</span>';
+            html += '</div>';
+        } else { html += '<p class="um-wizard-summary-empty">None selected</p>'; }
+        html += '</div>';
+
+        // Departments
+        html += '<div class="um-wizard-summary-group">';
+        html += '<div class="um-wizard-summary-header"><span class="um-wizard-summary-label">Departments</span>';
+        html += '<button type="button" class="um-wizard-summary-edit" data-edit-screen="wizard-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button></div>';
+        if (sel.departments.length) {
+            html += '<div class="um-wizard-summary-chips">';
+            for (var i = 0; i < sel.departments.length; i++) html += '<span class="um-wizard-chip">' + esc(sel.departments[i]) + '</span>';
+            html += '</div>';
+        } else { html += '<p class="um-wizard-summary-empty">None selected</p>'; }
+        html += '</div>';
+
+        // Rights section — show differently based on template vs manual selection
+        html += '<div class="um-wizard-summary-group">';
+        html += '<div class="um-wizard-summary-header"><span class="um-wizard-summary-label">Rights</span>';
+        html += '<button type="button" class="um-wizard-summary-edit" data-edit-screen="wizard-3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</button></div>';
+
+        if (sel.template) {
+            // Template selected — show template name and the rights it includes
+            html += '<p class="um-wizard-template-text"><span class="um-template-label">Template:</span> ' + esc(sel.template) + '</p>';
+            if (sel.rights.length) {
+                html += '<p class="um-wizard-rights-note">Rights included:</p>';
+                html += '<div class="um-wizard-summary-chips">';
+                for (var i = 0; i < sel.rights.length; i++) html += '<span class="um-wizard-chip">' + esc(sel.rights[i]) + '</span>';
+                html += '</div>';
+            }
+        } else if (sel.isCustom && sel.rights.length) {
+            // Custom rights — user manually selected checkboxes
+            html += '<p class="um-wizard-template-text"><span class="um-custom-label">Custom Rights</span></p>';
+            html += '<p class="um-wizard-rights-note">Rights selected:</p>';
+            html += '<div class="um-wizard-summary-chips">';
+            for (var i = 0; i < sel.rights.length; i++) html += '<span class="um-wizard-chip">' + esc(sel.rights[i]) + '</span>';
+            html += '</div>';
+        } else {
+            html += '<p class="um-wizard-summary-empty">None selected</p>';
+        }
+        html += '</div>';
+
+        el.innerHTML = html;
+
+        // Attach edit button handlers
+        var editBtns = el.querySelectorAll('.um-wizard-summary-edit');
+        for (var i = 0; i < editBtns.length; i++) {
+            editBtns[i].addEventListener('click', function () {
+                umShowPanelScreen(this.getAttribute('data-edit-screen'));
+            });
+        }
+    }
+
+    // --- Done screen ---
+    function umShowDoneScreen(userName, withRights, selections) {
+        var titleEl = document.getElementById('umDoneTitle');
+        var subtitleEl = document.getElementById('umDoneSubtitle');
+        var summaryEl = document.getElementById('umDoneSummary');
+
+        if (withRights && selections) {
+            titleEl.textContent = userName + ' created with rights assigned';
+            subtitleEl.textContent = '';
+            var html = '';
+            var groups = [
+                { label: 'Branches', items: selections.branches },
+                { label: 'Departments', items: selections.departments },
+                { label: 'Rights', items: selections.rights }
+            ];
+            if (selections.template) groups.push({ label: 'Template', items: [selections.template] });
+            for (var g = 0; g < groups.length; g++) {
+                if (!groups[g].items.length) continue;
+                html += '<div class="um-wizard-summary-group"><span class="um-wizard-summary-label">' + esc(groups[g].label) + '</span><div class="um-wizard-summary-chips">';
+                for (var j = 0; j < groups[g].items.length; j++) html += '<span class="um-wizard-chip">' + esc(groups[g].items[j]) + '</span>';
+                html += '</div></div>';
+            }
+            summaryEl.innerHTML = html;
+        } else {
+            titleEl.textContent = userName + ' created successfully';
+            subtitleEl.textContent = 'You can assign rights later from the user table.';
+            summaryEl.innerHTML = '';
+        }
+        umShowPanelScreen('done');
+    }
+
+    // --- Selection counter helper ---
+    function umUpdateWizardCount(listId, countId) {
+        var boxes = document.querySelectorAll('#' + listId + ' input[type="checkbox"]');
+        var checked = document.querySelectorAll('#' + listId + ' input[type="checkbox"]:checked');
+        var el = document.getElementById(countId);
+        if (el) {
+            el.textContent = checked.length + ' of ' + boxes.length + ' selected';
+            if (checked.length > 0) el.classList.add('has-selection');
+            else el.classList.remove('has-selection');
+        }
+    }
+
+    // --- Build previous selections chips ---
+    function umBuildPrevSelections(containerId, groups) {
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        var html = '';
+        for (var g = 0; g < groups.length; g++) {
+            if (!groups[g].items.length) continue;
+            html += '<div class="um-wizard-prev-group">';
+            html += '<span class="um-wizard-prev-label">' + esc(groups[g].label) + ':</span>';
+            for (var i = 0; i < groups[g].items.length; i++) {
+                html += '<span class="um-wizard-prev-chip">' + esc(groups[g].items[i]) + '</span>';
+            }
+            html += '</div>';
+        }
+        el.innerHTML = html;
+    }
+
+    // --- Template indicator logic (inside dropdown) ---
+    function umUpdateTemplateIndicator() {
+        var wrap = document.getElementById('umWizardTemplateWrap');
+        var tplEl = document.getElementById('umWizardTemplateDropdown');
+        if (!wrap || !tplEl) return;
+
+        var checkedRights = document.querySelectorAll('#umWizardRightsList input[type="checkbox"]:checked');
+        var customOption = tplEl.querySelector('option[value="custom"]');
+
+        wrap.classList.remove('is-custom', 'is-template');
+
+        if (tplEl.value && tplEl.value !== 'custom' && tplEl.value !== '') {
+            // A real template is selected
+            wrap.classList.add('is-template');
+            // Remove custom option if it exists
+            if (customOption) customOption.remove();
+        } else if (checkedRights.length > 0) {
+            // Manual checkboxes selected — add and select "Custom Rights" option
+            if (!customOption) {
+                customOption = document.createElement('option');
+                customOption.value = 'custom';
+                customOption.disabled = true;
+                customOption.textContent = 'Custom Rights';
+                // Insert as second option (after "Select Template")
+                tplEl.insertBefore(customOption, tplEl.options[1]);
+            }
+            tplEl.value = 'custom';
+            wrap.classList.add('is-custom');
+        } else {
+            // Nothing selected — remove custom option and reset
+            if (customOption) customOption.remove();
+            tplEl.value = '';
+        }
+    }
+
+    // --- Wizard rights checkbox change listener (delegated) ---
+    function umSetupRightsCheckboxListener() {
+        var list = document.getElementById('umWizardRightsList');
+        if (!list) return;
+        list.addEventListener('change', function (e) {
+            if (e.target.type === 'checkbox') {
+                // If user manually checks/unchecks, switch to custom
+                var tplEl = document.getElementById('umWizardTemplateDropdown');
+                if (tplEl && tplEl.value !== '' && tplEl.value !== 'custom') {
+                    // Clear template when user manually changes checkboxes
+                    tplEl.value = 'custom';
+                }
+                umUpdateTemplateIndicator();
+                umUpdateWizardCount('umWizardRightsList', 'umWizardRightsCount');
+            }
+        });
+    }
+
+    // --- Template dropdown change handler ---
+    var umTplDropdown = document.getElementById('umWizardTemplateDropdown');
+    if (umTplDropdown) {
+        umTplDropdown.addEventListener('change', function () {
+            umUpdateTemplateIndicator();
+        });
+    }
+
+    // --- Create new template link ---
+    var umCreateTemplateLink = document.getElementById('umCreateTemplateLink');
+    if (umCreateTemplateLink) {
+        umCreateTemplateLink.addEventListener('click', function () {
+            // Close the create user panel
+            umCloseCreatePanel();
+            // Switch to templates tab
+            umSwitchTab('templates');
+        });
+    }
+
+    // --- Reset wizard ---
+    function umResetWizard() {
+        var boxes = document.querySelectorAll('#umWizardBranchList input[type="checkbox"], #umWizardDeptList input[type="checkbox"], #umWizardRightsList input[type="checkbox"]');
+        for (var i = 0; i < boxes.length; i++) boxes[i].checked = false;
+        var tpl = document.getElementById('umWizardTemplateDropdown');
+        if (tpl) tpl.value = '';
+        var summary = document.getElementById('umWizardSummaryContent');
+        if (summary) summary.innerHTML = '';
+        // Reset dropdown wrap styling
+        var wrap = document.getElementById('umWizardTemplateWrap');
+        if (wrap) wrap.classList.remove('is-custom', 'is-template');
+        // Reset counters
+        umUpdateWizardCount('umWizardBranchList', 'umWizardBranchCount');
+        umUpdateWizardCount('umWizardDeptList', 'umWizardDeptCount');
+        umUpdateWizardCount('umWizardRightsList', 'umWizardRightsCount');
+        // Clear prev selections
+        var prev2 = document.getElementById('umWizardPrevStep2');
+        var prev3 = document.getElementById('umWizardPrevStep3');
+        if (prev2) prev2.innerHTML = '';
+        if (prev3) prev3.innerHTML = '';
+    }
+
+    // --- Toggle all helper (enhanced with count update) ---
+    function umSetupToggle(buttonId, listId, countId) {
+        var btn = document.getElementById(buttonId);
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var boxes = document.querySelectorAll('#' + listId + ' input[type="checkbox"]');
+            var allChecked = true;
+            for (var i = 0; i < boxes.length; i++) { if (!boxes[i].checked) { allChecked = false; break; } }
+            for (var j = 0; j < boxes.length; j++) boxes[j].checked = !allChecked;
+            btn.textContent = allChecked ? 'Select All' : 'Unselect All';
+            if (countId) umUpdateWizardCount(listId, countId);
+        });
+    }
+    umSetupToggle('umWizardBranchToggle', 'umWizardBranchList', 'umWizardBranchCount');
+    umSetupToggle('umWizardDeptToggle', 'umWizardDeptList', 'umWizardDeptCount');
+
+    // --- Checkbox change listeners for count updates (delegated) ---
+    function umSetupCountListener(listId, countId) {
+        var list = document.getElementById(listId);
+        if (!list) return;
+        list.addEventListener('change', function (e) {
+            if (e.target.type === 'checkbox') umUpdateWizardCount(listId, countId);
+        });
+    }
+    umSetupCountListener('umWizardBranchList', 'umWizardBranchCount');
+    umSetupCountListener('umWizardDeptList', 'umWizardDeptCount');
+    // Rights count is handled by the rights checkbox listener above
+
+    // --- Setup rights listener ---
+    umSetupRightsCheckboxListener();
+
+    // --- Choice cards ---
+    var umChoiceAssignNow = document.getElementById('umChoiceAssignNow');
+    var umChoiceAssignLater = document.getElementById('umChoiceAssignLater');
+
+    if (umChoiceAssignNow) {
+        umChoiceAssignNow.addEventListener('click', function () {
+            umWantAssignRights = true;
+            umChoiceAssignNow.classList.add('active');
+            umChoiceAssignLater.classList.remove('active');
+            umCreateSubmit.textContent = 'Next';
+        });
+    }
+
+    if (umChoiceAssignLater) {
+        umChoiceAssignLater.addEventListener('click', function () {
+            umWantAssignRights = false;
+            umChoiceAssignLater.classList.add('active');
+            umChoiceAssignNow.classList.remove('active');
+            umCreateSubmit.textContent = 'Create User';
+        });
+    }
+
+    // --- Wizard Navigation ---
+    var umWizardNext = document.getElementById('umWizardNext');
+    var umWizardBack = document.getElementById('umWizardBack');
+
+    if (umWizardNext) {
+        umWizardNext.addEventListener('click', function () {
+            if (umCurrentScreen === 'wizard-1') {
+                // Build prev selections for step 2
+                var sel = umReadWizardSelections();
+                umBuildPrevSelections('umWizardPrevStep2', [{ label: 'Branches', items: sel.branches }]);
+                umShowPanelScreen('wizard-2');
+            } else if (umCurrentScreen === 'wizard-2') {
+                // Build prev selections for step 3
+                var sel = umReadWizardSelections();
+                umBuildPrevSelections('umWizardPrevStep3', [
+                    { label: 'Branches', items: sel.branches },
+                    { label: 'Departments', items: sel.departments }
+                ]);
+                umUpdateTemplateIndicator();
+                umShowPanelScreen('wizard-3');
+            } else if (umCurrentScreen === 'wizard-3') {
+                umBuildWizardSummary();
+                umShowPanelScreen('wizard-summary');
+            } else if (umCurrentScreen === 'wizard-summary') {
+                if (umEditRightsMode) {
+                    umSaveUserRights();
+                } else {
+                    umCreateUserWithRights();
+                }
+            }
+        });
+    }
+
+    if (umWizardBack) {
+        umWizardBack.addEventListener('click', function () {
+            if (umCurrentScreen === 'wizard-1') umShowPanelScreen('form');
+            else if (umCurrentScreen === 'wizard-2') umShowPanelScreen('wizard-1');
+            else if (umCurrentScreen === 'wizard-3') umShowPanelScreen('wizard-2');
+            else if (umCurrentScreen === 'wizard-summary') umShowPanelScreen('wizard-3');
+        });
+    }
+
+    // --- Modify User Details Links (delegated event handling) ---
+    var umPanelBody = document.getElementById('umCreatePanel');
+    if (umPanelBody) {
+        umPanelBody.addEventListener('click', function (e) {
+            var modifyBtn = e.target.closest('.um-wizard-modify-link');
+            if (modifyBtn) {
+                var targetScreen = modifyBtn.getAttribute('data-goto-screen');
+                if (targetScreen) umShowPanelScreen(targetScreen);
+            }
+        });
+    }
+
+    // --- Create user with rights (from wizard summary) ---
+    function umCreateUserWithRights() {
+        var name = document.getElementById('umNewUserName').value.trim();
+        var phone = document.getElementById('umNewUserPhone').value.trim();
+        var email = document.getElementById('umNewUserEmail').value.trim();
+        var selections = umReadWizardSelections();
+        var tplEl = document.getElementById('umWizardTemplateDropdown');
+        var tplKey = (tplEl && tplEl.value !== 'custom') ? tplEl.value : '';
+
+        var newUser = {
+            id: umNextId++, name: name, phone: phone, email: email,
+            phoneVerified: false, emailVerified: false, superAdmin: false, template: tplKey
+        };
+        umAllUsers.push(newUser);
+        umLastCreatedUser = newUser;
+        umUpdateFilterOptions();
+        umRenderTable();
+        umShowToast('User created with rights assigned');
+        umShowDoneScreen(name, true, selections);
+    }
+
+    // --- Save user rights (edit rights mode) ---
+    function umSaveUserRights() {
+        if (umEditingUserId === null) return;
+
+        var userName = document.getElementById('umNewUserName').value.trim();
+        var selections = umReadWizardSelections();
+        var tplEl = document.getElementById('umWizardTemplateDropdown');
+        var tplKey = (tplEl && tplEl.value !== 'custom') ? tplEl.value : '';
+
+        // Find and update the user
+        for (var i = 0; i < umAllUsers.length; i++) {
+            if (umAllUsers[i].id === umEditingUserId) {
+                umAllUsers[i].template = tplKey;
+                // In a real app, you would save branches, departments, and individual rights here
+                break;
+            }
+        }
+
+        umUpdateFilterOptions();
+        umRenderTable();
+        umShowToast('Rights updated for ' + userName);
+        umShowDoneScreen(userName, true, selections);
+    }
+
+    // --- Done button ---
+    var umWizardDone = document.getElementById('umWizardDone');
+    if (umWizardDone) {
+        umWizardDone.addEventListener('click', function () { umCloseCreatePanel(); });
+    }
+
+    if (umCreateUserBtn) {
+        umCreateUserBtn.addEventListener('click', function () { umOpenCreatePanel(); });
+    }
+
+    function umOpenCreatePanel() {
+        umEditingUserId = null;
+        umWantAssignRights = false;
+        umEditRightsMode = false;
+        umCreateSubmit.textContent = 'Create User';
+        document.getElementById('umNewUserName').value = '';
+        document.getElementById('umNewUserPhone').value = '';
+        document.getElementById('umNewUserEmail').value = '';
+        var groups = umCreateOverlay.querySelectorAll('.um-form-group');
+        for (var i = 0; i < groups.length; i++) groups[i].classList.remove('has-error');
+        var choiceSection = document.getElementById('umAssignChoiceSection');
+        if (choiceSection) choiceSection.style.display = '';
+        if (umChoiceAssignLater) umChoiceAssignLater.classList.remove('active');
+        if (umChoiceAssignNow) umChoiceAssignNow.classList.remove('active');
+        umResetWizard();
+        umShowPanelScreen('form');
+        umCreateOverlay.classList.add('open');
+    }
+
+    function umOpenEditPanel(userId) {
+        var user = null;
+        for (var i = 0; i < umAllUsers.length; i++) {
+            if (umAllUsers[i].id === userId) { user = umAllUsers[i]; break; }
+        }
+        if (!user) return;
+        umEditingUserId = userId;
+        umWantAssignRights = false;
+        umCreateSubmit.textContent = 'Save Changes';
+        document.getElementById('umNewUserName').value = user.name;
+        document.getElementById('umNewUserPhone').value = user.phone;
+        document.getElementById('umNewUserEmail').value = user.email || '';
+        var groups = umCreateOverlay.querySelectorAll('.um-form-group');
+        for (var i = 0; i < groups.length; i++) groups[i].classList.remove('has-error');
+        var choiceSection = document.getElementById('umAssignChoiceSection');
+        if (choiceSection) choiceSection.style.display = 'none';
+        umShowPanelScreen('form');
+        umCreateOverlay.classList.add('open');
+    }
+
+    function umCloseCreatePanel() {
+        umCreateOverlay.classList.remove('open');
+        umEditingUserId = null;
+        setTimeout(function () {
+            umWantAssignRights = false;
+            umEditRightsMode = false;
+            umShowPanelScreen('form');
+            umResetWizard();
+            if (umChoiceAssignLater) umChoiceAssignLater.classList.remove('active');
+            if (umChoiceAssignNow) umChoiceAssignNow.classList.remove('active');
+        }, 350);
+    }
+
+    if (umCreateClose) {
+        umCreateClose.addEventListener('click', umCloseCreatePanel);
+    }
+
+    if (umCreateOverlay) {
+        umCreateOverlay.addEventListener('click', function (e) {
+            if (e.target === umCreateOverlay) umCloseCreatePanel();
+        });
+    }
+
+    if (umCreateSubmit) {
+        umCreateSubmit.addEventListener('click', function () {
+            var name = document.getElementById('umNewUserName').value.trim();
+            var phone = document.getElementById('umNewUserPhone').value.trim();
+            var email = document.getElementById('umNewUserEmail').value.trim();
+            var valid = true;
+
+            var nameGroup = document.getElementById('umNewUserName').closest('.um-form-group');
+            if (!name) { nameGroup.classList.add('has-error'); valid = false; } else { nameGroup.classList.remove('has-error'); }
+
+            var phoneGroup = document.getElementById('umNewUserPhone').closest('.um-form-group');
+            if (!phone || phone.length < 10 || !/^\d+$/.test(phone)) { phoneGroup.classList.add('has-error'); valid = false; } else { phoneGroup.classList.remove('has-error'); }
+
+            var emailGroup = document.getElementById('umNewUserEmail').closest('.um-form-group');
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailGroup.classList.add('has-error'); valid = false; } else { emailGroup.classList.remove('has-error'); }
+
+            if (!valid) return;
+
+            if (umEditingUserId !== null) {
+                // Edit mode — save changes
+                for (var j = 0; j < umAllUsers.length; j++) {
+                    if (umAllUsers[j].id === umEditingUserId) {
+                        umAllUsers[j].name = name; umAllUsers[j].phone = phone; umAllUsers[j].email = email; break;
+                    }
+                }
+                umCloseCreatePanel();
+                umUpdateFilterOptions();
+                umRenderTable();
+                umShowToast('User updated successfully');
+            } else if (umWantAssignRights) {
+                // Assign Now → enter wizard
+                umPopulateWizardChecklists();
+                umShowPanelScreen('wizard-1');
+            } else {
+                // Assign Later → create user directly
+                var newUser = {
+                    id: umNextId++, name: name, phone: phone, email: email,
+                    phoneVerified: false, emailVerified: false, superAdmin: false, template: ''
+                };
+                umAllUsers.push(newUser);
+                umLastCreatedUser = newUser;
+                umUpdateFilterOptions();
+                umRenderTable();
+                umShowToast('User created successfully');
+                umShowDoneScreen(name, false);
+            }
+        });
+    }
+
+    // --- Toast ---
+    function umShowToast(msg) {
+        // Remove existing toast
+        var old = document.querySelector('.um-toast');
+        if (old) old.remove();
+
+        var toast = document.createElement('div');
+        toast.className = 'um-toast';
+        toast.innerHTML = '<span class="um-toast-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span><span>' + esc(msg) + '</span>';
+        document.body.appendChild(toast);
+
+        // Animate in
+        requestAnimationFrame(function () {
+            toast.classList.add('show');
+        });
+
+        // Remove after 3s
+        setTimeout(function () {
+            toast.classList.remove('show');
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    // --- Delete User ---
+    var umDeleteModal = document.getElementById('umDeleteModal');
+    var umDeleteCancel = document.getElementById('umDeleteCancel');
+    var umDeleteConfirm = document.getElementById('umDeleteConfirm');
+    var umDeleteTargetId = null;
+
+    function umShowDeleteModal(userId) {
+        umDeleteTargetId = userId;
+        var user = umFindUser(userId);
+        if (user) {
+            document.getElementById('umDeleteUserName').textContent = user.name;
+        }
+        if (umDeleteModal) umDeleteModal.classList.add('visible');
+    }
+
+    function umHideDeleteModal() {
+        if (umDeleteModal) umDeleteModal.classList.remove('visible');
+        umDeleteTargetId = null;
+    }
+
+    if (umDeleteCancel) {
+        umDeleteCancel.addEventListener('click', umHideDeleteModal);
+    }
+
+    if (umDeleteConfirm) {
+        umDeleteConfirm.addEventListener('click', function () {
+            if (umDeleteTargetId !== null) {
+                umAllUsers = umAllUsers.filter(function (u) { return u.id !== umDeleteTargetId; });
+                umUpdateFilterOptions();
+                umRenderTable();
+                umShowToast('User deleted successfully');
+            }
+            umHideDeleteModal();
+        });
+    }
+
+    // --- Assign Rights ---
+    function umFindUser(id) {
+        for (var i = 0; i < umUsers.length; i++) {
+            if (umUsers[i].id === id) return umUsers[i];
+        }
+        return null;
+    }
+
+    function umOpenAssignRights(userId) {
+        var user = umFindUser(userId);
+        if (!user) return;
+
+        // Open the slide-in panel in "edit rights" mode
+        umEditingUserId = userId;
+        umEditRightsMode = true;
+        umWantAssignRights = false;
+
+        // Set user details (hidden but needed for summary)
+        document.getElementById('umNewUserName').value = user.name;
+        document.getElementById('umNewUserPhone').value = user.phone;
+        document.getElementById('umNewUserEmail').value = user.email || '';
+
+        // Populate wizard with existing data if available
+        umPopulateWizardChecklists();
+        // TODO: Load existing branches, departments, rights for this user
+
+        // Show wizard step 1 directly (skip form)
+        umPanelTitle.textContent = 'Edit Rights';
+        umShowPanelScreen('wizard-1');
+        umCreateOverlay.classList.add('open');
+    }
+
+    // Back to Users
+    var umBackToUsers = document.getElementById('umBackToUsers');
+    if (umBackToUsers) {
+        umBackToUsers.addEventListener('click', function () {
+            umShowView('manageUsers');
+        });
+    }
+
+    // Save Rights
+    var umSaveRightsBtn = document.getElementById('umSaveRightsBtn');
+    if (umSaveRightsBtn) {
+        umSaveRightsBtn.addEventListener('click', function () {
+            umShowToast('Rights saved successfully');
+            setTimeout(function () {
+                umShowView('manageUsers');
+            }, 500);
+        });
+    }
+
+    // Branch toggle all
+    var umBranchToggle = document.getElementById('umBranchToggle');
+    if (umBranchToggle) {
+        umBranchToggle.addEventListener('click', function () {
+            var list = document.getElementById('umBranchList');
+            var boxes = list.querySelectorAll('input[type="checkbox"]');
+            var allChecked = true;
+            for (var i = 0; i < boxes.length; i++) {
+                if (!boxes[i].checked) { allChecked = false; break; }
+            }
+            for (var j = 0; j < boxes.length; j++) {
+                boxes[j].checked = !allChecked;
+            }
+            this.textContent = allChecked ? 'Select All' : 'Unselect All';
+        });
+    }
+
+    // Dept toggle all
+    var umDeptToggle = document.getElementById('umDeptToggle');
+    if (umDeptToggle) {
+        umDeptToggle.addEventListener('click', function () {
+            var list = document.getElementById('umDeptList');
+            var boxes = list.querySelectorAll('input[type="checkbox"]');
+            var allChecked = true;
+            for (var i = 0; i < boxes.length; i++) {
+                if (!boxes[i].checked) { allChecked = false; break; }
+            }
+            for (var j = 0; j < boxes.length; j++) {
+                boxes[j].checked = !allChecked;
+            }
+            this.textContent = allChecked ? 'Select All' : 'Unselect All';
+        });
+    }
+
+    // --- UM Initial Render ---
+    umRenderTable();
+    umUpdateFilterOptions();
+    umRenderTemplateTable();
+    umUpdateTemplateFilterOptions();
 
     // --- Initial Render ---
     renderTable();
