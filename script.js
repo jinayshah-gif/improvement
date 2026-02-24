@@ -189,6 +189,14 @@ function getColspan() {
 
 // ==================== RENDER ====================
 
+/**
+* Render the current page of activity logs into the desktop table and mobile card list, update pagination and selection UI.
+* @example
+* renderTable()
+* undefined
+* @param {void} none - No arguments.
+* @returns {void} No return value; updates DOM directly.
+**/
 function renderTable() {
     var data = getSortedData();
     var total = data.length;
@@ -289,6 +297,14 @@ function renderTable() {
 
 // ==================== PAGINATION ====================
 
+/**
+* Render pagination controls into the '#pageButtons' DOM container based on the current page and total number of pages.
+* @example
+* renderPagination(5)
+* undefined
+* @param {number} totalPages - Total number of pages to render in the pagination control.
+* @returns {void} Does not return a value; updates the DOM with pagination buttons.
+*/
 function renderPagination(totalPages) {
     var container = document.getElementById('pageButtons');
     var html = '';
@@ -310,6 +326,15 @@ function renderPagination(totalPages) {
     container.innerHTML = html;
 }
 
+/**
+* Generate pagination page range including first, last, surrounding pages and '...' placeholders.
+* @example
+* getPageRange(4, 10)
+* [1, '...', 3, 4, 5, '...', 10]
+* @param {number} current - Current active page (1-based).
+* @param {number} total - Total number of pages.
+* @returns {(Array<number|string>)} Array of page numbers and '...' strings representing the pagination range.
+*/
 function getPageRange(current, total) {
     if (total <= 7) {
         var arr = [];
@@ -352,6 +377,13 @@ function goToPage(page) {
 
 // ==================== SORTING ====================
 
+/**
+* Returns a shallow copy of the global allData array, sorted by the current global sortKey and sortOrder; if no sortKey is defined or sortOrder is 'none', returns an unsorted shallow copy.
+* @example
+* getSortedData()
+* [{ id: 1, name: 'alice' }, { id: 2, name: 'bob' }]
+* @returns {Array<Object>} A new array of objects representing the (possibly) sorted data.
+*/
 function getSortedData() {
     if (!sortKey || sortOrder === 'none') {
         return allData.slice();
@@ -370,6 +402,13 @@ function getSortedData() {
 
 // ==================== EXPORT ====================
 
+/**
+* Generate and download a CSV file named 'activity_logs.csv' from sorted activity log data.
+* @example
+* exportCSV()
+* Initiates download of 'activity_logs.csv' and returns undefined.
+* @returns {void} Initiates CSV creation and download; does not return a value.
+**/
 function exportCSV() {
     var data = getSortedData();
     var headers = ['Module', 'Sub Module', 'Emp Name', 'Title', 'Description',
@@ -440,6 +479,14 @@ function updateSelectionBar() {
     }
 }
 
+/**
+* Update the "Select All" checkbox state based on items selected on the current page.
+* @example
+* updateSelectAllCheckbox([{_id: 'a'}, {_id: 'b'}])
+* undefined
+* @param {Array<Object>} pageData - Array of item objects visible on the current page; each must have an _id property.
+* @returns {void} Updates the DOM checkbox with id "selectAllCheckbox"; does not return a value.
+**/
 function updateSelectAllCheckbox(pageData) {
     var cb = document.getElementById('selectAllCheckbox');
     if (!cb || !pageData || pageData.length === 0) {
@@ -462,6 +509,13 @@ function updateSelectAllCheckbox(pageData) {
     }
 }
 
+/**
+* Export selected activity log entries to a CSV file and initiate download.
+* @example
+* exportSelectedCSV()
+* // Initiates download of "selected_activity_logs.csv" containing the selected rows.
+* @returns {void} Initiates a CSV download; no value is returned.
+*/
 function exportSelectedCSV() {
     var data = getSelectedData();
     if (data.length === 0) return;
@@ -498,6 +552,13 @@ function exportSelectedCSV() {
     document.body.removeChild(link);
 }
 
+/**
+* Export currently selected activity logs to a printable HTML document and trigger the print dialog.
+* @example
+* exportSelectedPDF()
+* undefined
+* @returns {void} Opens a new browser window containing formatted selected logs and calls print().
+**/
 function exportSelectedPDF() {
     var data = getSelectedData();
     if (data.length === 0) return;
@@ -555,6 +616,15 @@ var filterInstances = {};
 var umFilterInstances = {};
 var FILTER_KEYS = ['module', 'subModule', 'action', 'actionBy', 'empName', 'actionFrom', 'payrollDate', 'logTime'];
 
+/**
+* Create and initialize a searchable multi-select UI inside a DOM element, managing selection, filtering, keyboard navigation, and change callbacks.
+* @example
+* SearchableSelect(el, onChange)
+* undefined
+* @param {{HTMLElement}} {{el}} - Root DOM element where the searchable select will be rendered.
+* @param {{Function}} {{onChange}} - Callback invoked when the selection changes (no arguments expected).
+* @returns {{void}} No return value; the element is initialized and the instance is attached via the function (use as a constructor).
+**/
 function SearchableSelect(el, onChange) {
     var self = this;
     self.el = el;
@@ -877,6 +947,14 @@ function getTotalFilterCount() {
     return count;
 }
 
+/**
+ * Update the filter badge and clear-actions visibility according to the current filter count.
+ * @example
+ * updateFilterBadge()
+ * undefined
+ * @param {void} none - This function does not accept any arguments.
+ * @returns {void} Updates DOM elements (badge and .filter-actions) and does not return a value.
+ */
 function updateFilterBadge() {
     var count = getTotalFilterCount();
     var badge = document.getElementById('filterBadge');
@@ -891,6 +969,13 @@ function updateFilterBadge() {
     }
 }
 
+/**
+ * Return a shallow copy of originalData filtered to entries whose logDate falls within the confirmed DateRangePicker range (dates compared in 'DD-MM-YYYY' format). If no range is confirmed, returns an unfiltered copy of originalData.
+ * @example
+ * getDateFilteredData()
+ * [ { id: 1, logDate: '01-02-2024', ... } ]
+ * @returns {Array<Object>} A new array of data objects filtered by the confirmed date range or the full copy if no range is set.
+ */
 function getDateFilteredData() {
     var data = originalData.slice();
     var range = DateRangePicker.getConfirmedRange();
@@ -928,6 +1013,13 @@ function matchesFilter(rowValue, filterValues) {
     return false;
 }
 
+/**
+* Update filter option lists for each filter key by applying the date filter and all other active cross-filters (excluding the key being updated), compute unique values and their counts, and set those options on the corresponding filterInstances.
+* @example
+* updateFilterOptions()
+* undefined
+* @returns {void} Does not return a value; updates filterInstances in-place.
+*/
 function updateFilterOptions() {
     var baseData = getDateFilteredData();
 
@@ -970,6 +1062,13 @@ function updateFilterOptions() {
     }
 }
 
+/**
+* Update the global activeFilters object from current filterInstances, refresh filter badges and options, and re-apply filtering to the data.
+* @example
+* onFilterChange()
+* undefined
+* @returns {void} Does not return a value.
+**/
 function onFilterChange() {
     // Collect current values from all filter instances (arrays)
     activeFilters = {};
@@ -996,6 +1095,14 @@ function clearAllFilters() {
     refilterData();
 }
 
+/**
+* Refilters the current dataset by applying the date filter and then all active column filters (multi-value filters use OR matching), updates global state (allData, selectedIds, currentPage, expandedRowIndex), and re-renders the table.
+* @example
+* refilterData()
+* undefined
+* @param {{void}} {{none}} - No arguments.
+* @returns {{void}} Updates global state and triggers a table re-render.
+**/
 function refilterData() {
     // Start from date-filtered data
     var data = getDateFilteredData();
@@ -1108,6 +1215,14 @@ var DateRangePicker = (function () {
         return new Date(year, month, 1).getDay();
     }
 
+    /**
+    * Returns a date range object for a given preset key ('today', 'last3', 'last7', 'thisMonth', 'lastMonth').
+    * @example
+    * getPresetRange('last7')
+    * { from: Date, to: Date }
+    * @param {string} key - Preset key: 'today', 'last3', 'last7', 'thisMonth', or 'lastMonth'.
+    * @returns {{from: Date, to: Date}|null} Return an object with from and to Date instances (both normalized to midnight) for the requested range, or null if the key is not recognized.
+    */
     function getPresetRange(key) {
         var today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -1129,6 +1244,16 @@ var DateRangePicker = (function () {
         return { from: from, to: to };
     }
 
+    /**
+    * Renders the calendar month into a grid element, building day cells with states for today, disabled, selected range, and hover previews.
+    * @example
+    * renderMonth(document.getElementById('calendarGrid'), 2023, 6)
+    * undefined
+    * @param {{HTMLElement}} {{gridEl}} - Container element whose innerHTML will be filled with day cells.
+    * @param {{number}} {{year}} - Full year (e.g., 2023).
+    * @param {{number}} {{month}} - Month as a zero-based index (0 = January, 11 = December).
+    * @returns {{void}} Nothing is returned; the function updates the provided grid element's innerHTML.
+    **/
     function renderMonth(gridEl, year, month) {
         var html = '';
         var daysInMonth = getDaysInMonth(year, month);
@@ -1212,6 +1337,14 @@ var DateRangePicker = (function () {
     }
 
     // --- Month/Year Picker (full-width overlay) ---
+    /**
+     * Render and open the month-year picker UI for the given side ('left' or 'right').
+     * @example
+     * renderMonthYearPicker('left')
+     * undefined
+     * @param {{string}} {{side}} - Which side initiated the picker; expected 'left' or 'right'.
+     * @returns {{void}} No return value; the function updates the DOM to display the picker.
+     */
     function renderMonthYearPicker(side) {
         var today = new Date();
         var currentM = today.getMonth();
@@ -1258,6 +1391,15 @@ var DateRangePicker = (function () {
         }
     }
 
+    /**
+    * Handle a month selection for either the left or right calendar, updating viewMonth and viewYear with clamping so the right calendar never advances past the current month, then close the picker and re-render.
+    * @example
+    * onMonthYearSelect('left', 4)
+    * undefined
+    * @param {{string}} {{side}} - Side of the calendar that was changed: 'left' or 'right'.
+    * @param {{number}} {{month}} - Selected month index (0 = January, 11 = December).
+    * @returns {{void}} Updates global viewMonth/viewYear, closes the month/year picker and triggers a render; does not return a value.
+    **/
     function onMonthYearSelect(side, month) {
         var today = new Date();
         var currentY = today.getFullYear();
@@ -1294,6 +1436,13 @@ var DateRangePicker = (function () {
         render();
     }
 
+    /**
+    * Render the two-month calendar view and update DOM labels, navigation state, headers, presets and action buttons based on the current view and selected date range.
+    * @example
+    * render()
+    * undefined
+    * @returns {void} No return value; updates UI state and elements directly.
+    **/
     function render() {
         monthLabelLeft.textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
 
@@ -1338,6 +1487,13 @@ var DateRangePicker = (function () {
         }
     }
 
+    /**
+    * Update the trigger date display in the UI according to confirmedFrom and confirmedTo.
+    * @example
+    * updateTriggerDisplay()
+    * // Updates DOM elements; no return value.
+    * @returns {void} Does not return a value; updates triggerFromEl, triggerToEl and triggerSep in the DOM.
+    */
     function updateTriggerDisplay() {
         if (confirmedFrom && confirmedTo) {
             var from = confirmedFrom;
@@ -1355,6 +1511,13 @@ var DateRangePicker = (function () {
         }
     }
 
+    /**
+    * Open the date range picker popup, initialize view and range state, and render the UI.
+    * @example
+    * open()
+    * undefined
+    * @returns {void} No return value; function performs side effects by updating state and DOM.
+    **/
     function open() {
         if (isOpen) return;
         isOpen = true;
@@ -1397,6 +1560,14 @@ var DateRangePicker = (function () {
         close();
     }
 
+    /**
+    * Handle a click on a calendar day: update the selection range (rangeFrom/rangeTo), clear active preset, enforce a maximum 31-day range, and re-render.
+    * @example
+    * onDayClick('2023-06-15')
+    * undefined
+    * @param {{string}} {{dateStr}} - Date string in 'YYYY-MM-DD' format representing the clicked day.
+    * @returns {{void}} Does not return a value; updates module-level selection state and calls render().
+    **/
     function onDayClick(dateStr) {
         var parts = dateStr.split('-');
         var clicked = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
@@ -1414,6 +1585,14 @@ var DateRangePicker = (function () {
         render();
     }
 
+    /**
+     * Handle hovering over a calendar day string, updating internal hover state and triggering a re-render.
+     * @example
+     * onDayHover('2023-07-15')
+     * undefined
+     * @param {string} dateStr - Date string in "YYYY-MM-DD" format representing the hovered day.
+     * @returns {void} No return value; updates hover state and triggers re-render as a side effect.
+     */
     function onDayHover(dateStr) {
         if (!rangeFrom || rangeTo) {
             if (hoverDate) { hoverDate = null; render(); }
@@ -1439,6 +1618,13 @@ var DateRangePicker = (function () {
         return { from: from, to: to };
     }
 
+    /**
+    * Initialize the date range picker: cache DOM elements, update the trigger display, and attach all event listeners for opening/closing the popup, navigation, month/year picker, day grid interactions, presets, and confirm/cancel actions.
+    * @example
+    * init()
+    * undefined
+    * @returns {void} No return value.
+    **/
     function init() {
         trigger = document.getElementById('dateRangeTrigger');
         popup = document.getElementById('datePickerPopup');
@@ -1545,6 +1731,14 @@ var DateRangePicker = (function () {
         }
 
         var hoverTimer = null;
+        /**
+        * Handle hover events on a calendar grid, triggering a debounced onDayHover for valid day cells and clearing hover state for empty/disabled cells.
+        * @example
+        * handleGridHover(event)
+        * undefined
+        * @param {{Event}} {{e}} - The DOM event fired from the grid (e.g., mouseover/mousemove).
+        * @returns {{void}} Does not return a value; schedules or clears hover callbacks.
+        **/
         function handleGridHover(e) {
             var cell = e.target.closest('.day-cell');
             if (!cell || cell.classList.contains('empty') || cell.classList.contains('disabled')) {
@@ -1823,6 +2017,15 @@ function init() {
         settings: document.getElementById('pageSettings')
     };
 
+    /**
+    * Toggle sidebar navigation state and switch visible page content based on the provided item and page key.
+    * @example
+    * performPageNav(someSidebarItemElement, 'settings')
+    * undefined
+    * @param {HTMLElement} item - The sidebar item element that was clicked or activated.
+    * @param {string} pageKey - The key identifying which page/view should be activated.
+    * @returns {void} Performs DOM updates (active classes, submenu/accordion behavior, responsive closing) and does not return a value.
+    **/
     function performPageNav(item, pageKey) {
         var allItems = document.querySelectorAll('.sidebar-item');
         for (var j = 0; j < allItems.length; j++) {
@@ -1917,6 +2120,14 @@ function init() {
         payroll: document.getElementById('sectionPayroll')
     };
 
+    /**
+    * Switches the active settings navigation item and shows the corresponding settings section; when a management subsection is targeted it centers that subsection inside the management scroll container with a smooth scroll.
+    * @example
+    * performSettingsNav(document.querySelector('.settings-nav-item[data-section="example"]'))
+    * undefined
+    * @param {HTMLElement} linkEl - Clicked navigation link element with a "data-section" attribute.
+    * @returns {void} No return value.
+    **/
     function performSettingsNav(linkEl) {
         var sectionKey = linkEl.getAttribute('data-section');
         var isMgmt = managementSections.indexOf(sectionKey) !== -1;
@@ -1966,6 +2177,14 @@ function init() {
 
     // --- Highlight clicked section (pulse + dim others) ---
     var highlightTimer = null;
+    /**
+    * Temporarily highlights a management section element identified by the given key by adding CSS classes and removing them shortly after.
+    * @example
+    * highlightSection('users')
+    * undefined
+    * @param {string} sectionKey - Key used to look up the target element in the global mgmtItemMap; function returns early if no item or container exists.
+    * @returns {void} Does not return a value; performs DOM class toggling and uses a timeout to clear the highlight.
+    */
     function highlightSection(sectionKey) {
         var targetItem = mgmtItemMap[sectionKey];
         if (!targetItem || !mgmtScrollContainer) return;
@@ -2056,6 +2275,13 @@ function init() {
     }
 
     // --- Scroll-spy for Management sections ---
+    /**
+    * Initialize a scroll spy that observes section elements inside the global mgmtScrollContainer and toggles the 'active' class on sidebar links based on the currently visible section.
+    * @example
+    * initScrollSpy()
+    * undefined
+    * @returns {void} Sets up an IntersectionObserver and updates sidebar link active states; does not return a value.
+    **/
     (function initScrollSpy() {
         if (!mgmtScrollContainer) return;
         var scrollItems = mgmtScrollContainer.querySelectorAll('.mgmt-scroll-item');
@@ -2095,6 +2321,14 @@ function init() {
     })();
 
     // --- Floating sticky header for current section ---
+    /**
+    * Initializes and updates a floating header showing the title and description of the last section header scrolled past the top of a managed scroll container.
+    * @example
+    * initFloatingHeader()
+    * undefined
+    * @param {HTMLElement|null} mgmtScrollContainer - Global scroll container element referenced by the function; if falsy the function returns early.
+    * @returns {void} No return value.
+    **/
     (function initFloatingHeader() {
         if (!mgmtScrollContainer) return;
         var fh = document.getElementById('mgmtFloatingHeader');
@@ -2183,6 +2417,13 @@ function init() {
     // Crop drag state
     var cropDrag = { active: false, startX: 0, startY: 0 };
 
+    /**
+    * Reset the editor state and associated UI controls to their default values and exit crop mode.
+    * @example
+    * resetEditorState()
+    * undefined
+    * @returns {void} No return value.
+    **/
     function resetEditorState() {
         editorState.rotation = 0;
         editorState.flipH = false;
@@ -2202,6 +2443,14 @@ function init() {
         if (cropBtn) cropBtn.classList.remove('active');
     }
 
+    /**
+    * Renders the current editor image onto the editor canvas applying rotation, horizontal flip, automatic scaling and brightness/contrast filters.
+    * @example
+    * renderEditorCanvas()
+    * undefined
+    * @param {{void}} {{none}} - No arguments; the function reads global imgEditorCanvas and editorState.
+    * @returns {{undefined}} undefined - No return value; updates the canvas pixel content.
+    **/
     function renderEditorCanvas() {
         if (!imgEditorCanvas || !editorState.originalImg) return;
         var img = editorState.originalImg;
@@ -2234,6 +2483,13 @@ function init() {
         ctx.restore();
     }
 
+    /**
+    * Enable crop mode: shows the crop overlay and action bar, activates the crop button, and initializes a centered crop selection (60% of the canvas by default).
+    * @example
+    * enterCropMode()
+    * undefined
+    * @returns {void} No return value.
+    **/
     function enterCropMode() {
         editorState.cropMode = true;
         if (cropOverlay) cropOverlay.style.display = 'block';
@@ -2261,6 +2517,14 @@ function init() {
         if (cropBtn) cropBtn.classList.remove('active');
     }
 
+    /**
+    * Apply the current crop selection to the editor canvas, create a new cropped image, replace the editor image, reset transforms, re-render the canvas and exit crop mode.
+    * @example
+    * applyCrop()
+    * undefined
+    * @param {void} none - No parameters.
+    * @returns {void} Does not return a value; updates editor state and UI.
+    **/
     function applyCrop() {
         if (!imgEditorCanvas || !cropSelection) return;
         var canvas = imgEditorCanvas;
@@ -2336,6 +2600,13 @@ function init() {
         if (logoFileInput) logoFileInput.value = '';
     }
 
+    /**
+    * Apply the image currently edited on the canvas as the active logo, update the preview and relevant UI elements, and close the image editor.
+    * @example
+    * applyLogoFromEditor()
+    * undefined
+    * @returns {void} No return value.
+    */
     function applyLogoFromEditor() {
         if (!imgEditorCanvas) return;
         var dataUrl = imgEditorCanvas.toDataURL('image/png');
@@ -2702,6 +2973,13 @@ function init() {
         });
     }
 
+    /**
+    * Validate attendance registration inputs, save initial toggle/limit state, and return whether the save succeeded.
+    * @example
+    * doAttendanceSave()
+    * true
+    * @returns {{boolean}} True if data saved (valid), false if validation failed due to missing limit when required.
+    */
     function doAttendanceSave() {
         // Validate: if toggle is on, limit must have a value
         if (regToggle && regToggle.checked && regLimitInput && !regLimitInput.value.trim()) {
@@ -2735,6 +3013,14 @@ function init() {
     var hardwareInitialTime = syncTimeInput ? syncTimeInput.value : '1:00 PM';
 
     // Populate time options (every 30 min)
+    /**
+    * Build and populate a list of 30-minute interval time option elements (12-hour format) inside the global syncTimeList element, selecting the option matching hardwareInitialTime.
+    * @example
+    * buildTimeOptions()
+    * undefined
+    * @param {{void}} {{none}} - No parameters; the function reads global variables (syncTimeList, hardwareInitialTime).
+    * @returns {{void}} Updates the DOM by setting syncTimeList.innerHTML and returns nothing.
+    **/
     (function buildTimeOptions() {
         if (!syncTimeList) return;
         var html = '';
@@ -2835,6 +3121,13 @@ function init() {
     var mcViewYear = mcNow.getFullYear();
     var mcSelectedDate = null;
 
+    /**
+    * Render the mini calendar UI for the current view month/year, populating day buttons and highlighting today and the selected date.
+    * @example
+    * mcRender()
+    * undefined
+    * @returns {void} Updates the mini calendar DOM (no return value).
+    **/
     function mcRender() {
         if (!miniCalGrid || !miniCalMonthLabel) return;
         miniCalMonthLabel.textContent = MC_MONTHS[mcViewMonth] + ' ' + mcViewYear;
@@ -2873,6 +3166,14 @@ function init() {
     var ptmFutureBanner = document.getElementById('ptmFutureBanner');
     var ptmFutureText = document.getElementById('ptmFutureText');
 
+    /**
+    * Selects a day in the mini calendar, updates the selected date, UI elements, future-date banner, re-renders and auto-closes the calendar.
+    * @example
+    * mcSelectDay(15)
+    * undefined
+    * @param {number} day - Day of the month to select.
+    * @returns {void} Updates internal state and UI; does not return a value.
+    */
     function mcSelectDay(day) {
         mcSelectedDate = new Date(mcViewYear, mcViewMonth, day);
         var label = day + ' ' + MC_SHORT[mcViewMonth] + ' ' + mcViewYear;
@@ -2903,6 +3204,13 @@ function init() {
         setTimeout(mcClose, 150);
     }
 
+    /**
+    * Reset the mini calendar to its initial state: clears any selected date, sets the view to the current month and year, updates/remove UI text and classes, hides the future banner, closes the calendar overlay and re-renders the calendar.
+    * @example
+    * mcReset()
+    * undefined
+    * @returns {void} No return value.
+    */
     function mcReset() {
         mcSelectedDate = null;
         mcViewMonth = mcNow.getMonth();
@@ -3160,6 +3468,13 @@ function init() {
     }
 
     // Capture initial state for payroll
+    /**
+    * Capture current values of input and select elements inside the payrollSection and return them keyed by element id.
+    * @example
+    * capturePayrollState()
+    * { "salaryInput": "50000", "fullTimeCheckbox": true, "departmentSelect": "HR" }
+    * @returns {Object.<string, string|boolean>} Object mapping element IDs to their current value (string) or checked state (boolean).
+    */
     function capturePayrollState() {
         var state = {};
         if (payrollSection) {
@@ -3178,6 +3493,14 @@ function init() {
 
     var payrollInitialState = capturePayrollState();
 
+    /**
+    * Restore form input values in the payroll section from a saved state object.
+    * @example
+    * restorePayrollState({ "fullDayPenaltyToggle": true, "workingHours": "8" })
+    * undefined
+    * @param {{Object}} {{state}} - Object mapping input element IDs to saved values (booleans for checkboxes, strings for other inputs).
+    * @returns {{void}} No value is returned; the function updates DOM elements directly.
+    **/
     function restorePayrollState(state) {
         if (!payrollSection) return;
         var inputs = payrollSection.querySelectorAll('input, select');
@@ -3220,6 +3543,13 @@ function init() {
     var saveConfirmClose = document.getElementById('saveConfirmClose');
 
     // Build human-readable change summary
+    /**
+    * Builds a summary of modified settings and returns them as an array of change items grouped by section.
+    * @example
+    * buildChangeSummary()
+    * [{ section: 'Shifts & Time', text: 'Advance Shift <strong>enabled</strong>' }, { section: 'Payroll', text: 'Overtime changed to <strong>2</strong>' }]
+    * @returns {{Array<Object>}} Array of change items where each item has a 'section' and an HTML-formatted 'text' describing the change.
+    **/
     function buildChangeSummary() {
         var items = [];
 
@@ -3309,6 +3639,14 @@ function init() {
         return items;
     }
 
+    /**
+    * Render a grouped summary of changes into the global saveConfirmList element.
+    * @example
+    * renderChangeSummary([{section: 'General', text: 'Changed title'}])
+    * undefined
+    * @param {{Array.<{section: string, text: string}>}} {{items}} - Array of change items; each item should have 'section' and 'text' string properties.
+    * @returns {{void}} Updates the DOM (saveConfirmList.innerHTML) and returns nothing.
+    **/
     function renderChangeSummary(items) {
         if (!saveConfirmList) return;
         if (items.length === 0) {
@@ -3339,6 +3677,13 @@ function init() {
         if (saveConfirmModal) saveConfirmModal.classList.remove('visible');
     }
 
+    /**
+    * Validate management attendance inputs, build a change summary, and show the save confirmation modal.
+    * @example
+    * doManagementSave()
+    * undefined
+    * @returns {void} Performs validation and UI updates (may mark inputs as error, focus and scroll to fields, render summary, and display confirmation); does not return a value.
+    **/
     function doManagementSave() {
         // Validate attendance first
         if (attendanceDirty) {
@@ -3364,6 +3709,13 @@ function init() {
         showSaveConfirm();
     }
 
+    /**
+    * Save any pending changes for shifts, attendance, hardware, and payroll; hide the save confirmation and display temporary "Saved!" feedback on the management save button.
+    * @example
+    * confirmAndSave()
+    * undefined
+    * @returns {void} No return value.
+    **/
     function confirmAndSave() {
         hideSaveConfirm();
         if (shiftsDirty) doShiftsSave();
@@ -3412,6 +3764,10 @@ function init() {
     }
 
     // -- Generic unsaved modal --
+    /**
+    * Show a modal prompting the user to discard unsaved changes and store a pending navigation action.
+    * @example
+    * showUnsavedModal(function() { /* proceed */
     function showUnsavedModal(onComplete, source) {
         pendingNavAction = onComplete;
         pendingDirtySource = source || null;
@@ -3442,6 +3798,13 @@ function init() {
         pendingDirtySource = null;
     }
 
+    /**
+    * Set slipDirty to false and update the save button UI to show a saved state, then revert the button after a short delay.
+    * @example
+    * doSave()
+    * undefined
+    * @returns {{void}} No return value; updates global state and the DOM (saveBtn) as a side effect.
+    */
     function doSave() {
         slipDirty = false;
         if (saveBtn) {
@@ -3798,6 +4161,14 @@ function init() {
     }
 
     // --- UM Tab Switching ---
+    /**
+    * Switch the active UI tab and render corresponding content when opened.
+    * @example
+    * umSwitchTab('users')
+    * undefined
+    * @param {{string}} {{tabName}} - Name of the tab to activate; expected values: 'users' or 'templates'.
+    * @returns {{void}} No return value.
+    **/
     function umSwitchTab(tabName) {
         // Update tab buttons
         var allTabs = document.querySelectorAll('.um-tab');
@@ -3843,6 +4214,14 @@ function init() {
     }
 
     // --- UM View Switcher ---
+    /**
+    * Toggle the user-management UI to the specified view and update related UI state.
+    * @example
+    * umShowView('manageUsers')
+    * undefined
+    * @param {{string}} {{view}} - Name of the view to activate: 'manageUsers', 'assignRights', or 'manageTemplates'.
+    * @returns {{void}} Does not return a value.
+    **/
     function umShowView(view) {
         var umViewManageUsers = document.getElementById('umViewManageUsers');
         var umViewAssignRights = document.getElementById('umViewAssignRights');
@@ -3865,6 +4244,14 @@ function init() {
     }
 
     // --- UM Get Filtered Data ---
+    /**
+    * Return a filtered copy of umAllUsers based on criteria in umActiveFilters.
+    * @example
+    * umGetFilteredData()
+    * [{ id: 1, name: "Alice", role: "admin" }]
+    * @param {void} none - This function takes no arguments; it reads global state (umAllUsers and umActiveFilters).
+    * @returns {Array} Filtered array of user objects that match the active filters.
+    **/
     function umGetFilteredData() {
         var data = umAllUsers.slice();
         for (var key in umActiveFilters) {
@@ -3893,6 +4280,14 @@ function init() {
     }
 
     // --- UM Render Users Table ---
+    /**
+    * Render the user management table and pagination controls based on filtered data, current page, and page size.
+    * @example
+    * umRenderTable()
+    * undefined
+    * @param {void} none - This function takes no arguments.
+    * @returns {void} Updates the DOM (table body, user counts, and pagination buttons) and returns nothing.
+    **/
     function umRenderTable() {
         umUsers = umGetFilteredData();
         var total = umUsers.length;
@@ -4001,6 +4396,13 @@ function init() {
     }
 
     // --- UM Filter System ---
+    /**
+    * Update filter option lists for each filter key by cross-filtering umAllUsers with other active filters.
+    * @example
+    * umUpdateFilterOptions()
+    * // undefined (updates umFilterInstances in-place)
+    * @returns {void} Updates filter instance options in-place; no value is returned.
+    **/
     function umUpdateFilterOptions() {
         for (var k = 0; k < UM_FILTER_KEYS.length; k++) {
             var currentKey = UM_FILTER_KEYS[k];
@@ -4043,6 +4445,14 @@ function init() {
         }
     }
 
+    /**
+    * Handle filter changes by rebuilding active filters, updating filter UI (badges and options), resetting the current page, and re-rendering the table.
+    * @example
+    * umOnFilterChange()
+    * undefined
+    * @param {void} none - No parameters.
+    * @returns {void} No return value.
+    **/
     function umOnFilterChange() {
         umActiveFilters = {};
         for (var i = 0; i < UM_FILTER_KEYS.length; i++) {
@@ -4056,6 +4466,13 @@ function init() {
         umRenderTable();
     }
 
+    /**
+    * Update the UI filter badge and toggle visibility of clear actions based on the number of active filters.
+    * @example
+    * umUpdateFilterBadge()
+    * undefined
+    * @returns {void} No return value; updates DOM elements in place.
+    */
     function umUpdateFilterBadge() {
         var count = 0;
         for (var key in umActiveFilters) {
@@ -4076,6 +4493,13 @@ function init() {
     }
 
     // Init UM searchable selects
+    /**
+    * Initialize UM filter widgets on the page: find elements with class "searchable-select um-filter", copy their data-um-key into data-key, instantiate SearchableSelect for each with umOnFilterChange, store instances on umFilterInstances by key, and refresh available filter options.
+    * @example
+    * initUmFilters()
+    * undefined
+    * @returns {void} No return value.
+    **/
     (function initUmFilters() {
         var containers = document.querySelectorAll('.searchable-select.um-filter');
         for (var i = 0; i < containers.length; i++) {
@@ -4116,6 +4540,13 @@ function init() {
     }
 
     // --- UM Render Templates Table ---
+    /**
+    * Render the templates table into the DOM using current filters and pagination.
+    * @example
+    * umRenderTemplateTable()
+    * undefined
+    * @returns {void} Updates the table body, pagination controls and counts in the DOM; does not return a value.
+    */
     function umRenderTemplateTable() {
         var tbody = document.getElementById('umTemplateTableBody');
         var countEl = document.getElementById('umTemplateCount');
@@ -4158,6 +4589,15 @@ function init() {
             var createdDate = t.createdOn;
             var modifiedDate = t.lastModified;
 
+            /**
+            * Generate an HTML string that displays a formatted date/time and the user who performed the action.
+            * @example
+            * formatDateTimeUser('2021-07-20T18:30:00Z', 'Alice')
+            * '<div class="um-datetime-cell">...</div>'
+            * @param {{(Date|string|number)}} {{date}} - Date value or string/number parseable by Date to format.
+            * @param {{string}} {{userName}} - User name to display (will be escaped via esc()).
+            * @returns {{string}} HTML string containing the formatted date, time and user information.
+            **/
             var formatDateCell = function(date, userName) {
                 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 var d = new Date(date);
@@ -4321,6 +4761,15 @@ function init() {
     }
 
     // --- Template Filter Change Handler ---
+    /**
+    * Handle changes to a template filter: update internal filter state, refresh the filter badge, re-render the template table, and update available filter options.
+    * @example
+    * umOnTemplateFilterChange('templateName', ['Invoice'])
+    * undefined
+    * @param {string} key - The filter key being changed (e.g., 'templateName').
+    * @param {Array<string>} values - The new selected values for the specified filter.
+    * @returns {void} No return value; updates global state and UI directly.
+    */
     function umOnTemplateFilterChange(key, values) {
         umTemplateFilters[key] = values;
         umTemplateCurrentPage = 1;
@@ -4346,6 +4795,13 @@ function init() {
     }
 
     // --- Update Template Filter Options ---
+    /**
+    * Updates the template name filter options from the unique names found in the global umAllTemplates array.
+    * @example
+    * umUpdateTemplateFilterOptions()
+    * undefined
+    * @returns {void} Updates the filter UI; does not return a value.
+    **/
     function umUpdateTemplateFilterOptions() {
         // Get unique template names
         var nameSet = {};
@@ -4361,6 +4817,13 @@ function init() {
     }
 
     // --- Initialize Template Filters ---
+    /**
+    * Initialize SearchableSelect instances for template filter elements (elements with class 'searchable-select um-filter'), set their data-key attribute from data-um-key, store instances in umTemplateFilterInstances, and refresh available options.
+    * @example
+    * initTemplateFilters()
+    * undefined
+    * @returns {void} No return value; function initializes UI components and updates filter options.
+    */
     (function initTemplateFilters() {
         var containers = document.querySelectorAll('.searchable-select.um-filter');
         for (var i = 0; i < containers.length; i++) {
@@ -4460,6 +4923,14 @@ function init() {
     var umEditRightsMode = false; // True when editing rights only (from table 3-dot menu)
 
     // --- Panel Screen Management ---
+    /**
+    * Switches the create-panel UI to the specified screen, updating title, footer, button text/visibility, template indicator, and scroll position.
+    * @example
+    * umShowPanelScreen('wizard-1')
+    * undefined
+    * @param {{string}} {{screenName}} - Target screen identifier ('form', 'wizard-1', 'wizard-2', 'wizard-3', 'wizard-summary', or 'done').
+    * @returns {{void}} Does not return a value.
+    **/
     function umShowPanelScreen(screenName) {
         umCurrentScreen = screenName;
         var screenMap = {
@@ -4526,6 +4997,14 @@ function init() {
     }
 
     // --- Populate wizard checklists ---
+    /**
+    * Populate the wizard checklist DOMs from existing checkbox inputs, re-bind the rights checkbox listener, and update initial counts.
+    * @example
+    * umPopulateWizardChecklists()
+    * undefined
+    * @param {void} none - This function does not accept any arguments.
+    * @returns {void} Does not return a value.
+    **/
     function umPopulateWizardChecklists() {
         if (umWizardPopulated) return;
         var lists = [
@@ -4552,6 +5031,13 @@ function init() {
     }
 
     // --- Read wizard selections ---
+    /**
+    * Read the currently selected branches, departments, rights and chosen template from the user-management wizard and return them as a structured object.
+    * @example
+    * umReadWizardSelections()
+    * { branches: ['North Branch','South Branch'], departments: ['Sales','Support'], rights: ['Read','Write'], template: 'Standard Template', isCustom: false }
+    * @returns {Object} Object containing arrays of selected branches, departments and rights, the selected template text (or empty string) and a boolean isCustom flag.
+    **/
     function umReadWizardSelections() {
         var result = { branches: [], departments: [], rights: [], template: '', isCustom: false };
         var bBoxes = document.querySelectorAll('#umWizardBranchList input:checked');
@@ -4570,6 +5056,13 @@ function init() {
     }
 
     // --- Build wizard summary with edit buttons ---
+    /**
+    * Build and render the wizard summary inside the element #umWizardSummaryContent, showing user details, selected branches, departments and rights, and attach edit button handlers.
+    * @example
+    * umBuildWizardSummary()
+    * undefined
+    * @returns {void} Does not return a value.
+    **/
     function umBuildWizardSummary() {
         var el = document.getElementById('umWizardSummaryContent');
         if (!el) return;
@@ -4655,6 +5148,16 @@ function init() {
     }
 
     // --- Done screen ---
+    /**
+    * Update the UI to show a completion screen for a newly created user, including assigned rights summary when present.
+    * @example
+    * umShowDoneScreen('Alice', true, { branches: ['NY'], departments: ['Sales'], rights: ['Read'], template: 'Default' })
+    * undefined
+    * @param {{string}} {{userName}} - The display name of the user that was created.
+    * @param {{boolean}} {{withRights}} - Whether rights/assignments were provided and should be shown.
+    * @param {{Object}} {{selections}} - Object containing selections: branches, departments, rights arrays and an optional template string.
+    * @returns {{void}} No return value; updates the DOM to display the done panel.
+    **/
     function umShowDoneScreen(userName, withRights, selections) {
         var titleEl = document.getElementById('umDoneTitle');
         var subtitleEl = document.getElementById('umDoneSubtitle');
@@ -4698,6 +5201,15 @@ function init() {
     }
 
     // --- Build previous selections chips ---
+    /**
+    * Build and render previous selection chips inside a container element identified by its ID.
+    * @example
+    * umBuildPrevSelections('prev-container', [{ label: 'Colors', items: ['Red', 'Blue'] }]);
+    * undefined
+    * @param {string} containerId - ID of the container element where selections will be rendered.
+    * @param {Array<{label: string, items: string[]}>} groups - Array of groups, each with a label and an array of item strings.
+    * @returns {void} No return value; the function updates the DOM directly.
+    **/
     function umBuildPrevSelections(containerId, groups) {
         var el = document.getElementById(containerId);
         if (!el) return;
@@ -4715,6 +5227,13 @@ function init() {
     }
 
     // --- Template indicator logic (inside dropdown) ---
+    /**
+    * Update the template dropdown and wrapper classes to reflect a selected template or manually selected custom rights.
+    * @example
+    * umUpdateTemplateIndicator()
+    * undefined
+    * @returns {{void}} Updates DOM: toggles 'is-custom'/'is-template' on #umWizardTemplateWrap, manages the disabled "custom" option in #umWizardTemplateDropdown, and sets the select value.
+    **/
     function umUpdateTemplateIndicator() {
         var wrap = document.getElementById('umWizardTemplateWrap');
         var tplEl = document.getElementById('umWizardTemplateDropdown');
@@ -4750,6 +5269,13 @@ function init() {
     }
 
     // --- Wizard rights checkbox change listener (delegated) ---
+    /**
+     * Attach a change listener to the "umWizardRightsList" element so manual checkbox toggles switch the template dropdown to "custom" (if applicable), update the template indicator, and refresh the rights count.
+     * @example
+     * umSetupRightsCheckboxListener()
+     * undefined
+     * @returns {void} Does not return a value.
+     */
     function umSetupRightsCheckboxListener() {
         var list = document.getElementById('umWizardRightsList');
         if (!list) return;
@@ -4787,6 +5313,13 @@ function init() {
     }
 
     // --- Reset wizard ---
+    /**
+    * Reset the user management wizard UI to its default state.
+    * @example
+    * umResetWizard()
+    * undefined
+    * @returns {void} No value is returned; the function updates the DOM to clear selections and reset UI elements.
+    */
     function umResetWizard() {
         var boxes = document.querySelectorAll('#umWizardBranchList input[type="checkbox"], #umWizardDeptList input[type="checkbox"], #umWizardRightsList input[type="checkbox"]');
         for (var i = 0; i < boxes.length; i++) boxes[i].checked = false;
@@ -4809,6 +5342,16 @@ function init() {
     }
 
     // --- Toggle all helper (enhanced with count update) ---
+    /**
+    * Initialize a toggle button to select or unselect all checkboxes inside a given list and optionally update a counter.
+    * @example
+    * umSetupToggle('toggleBtn', 'itemsList', 'countDisplay')
+    * undefined
+    * @param {string} buttonId - ID of the button that will toggle the checkboxes.
+    * @param {string} listId - ID of the container element that holds the checkbox inputs.
+    * @param {string} [countId] - Optional ID of an element to update with the current selection count via umUpdateWizardCount.
+    * @returns {void} Nothing is returned.
+    */
     function umSetupToggle(buttonId, listId, countId) {
         var btn = document.getElementById(buttonId);
         if (!btn) return;
@@ -4916,6 +5459,13 @@ function init() {
     }
 
     // --- Create user with rights (from wizard summary) ---
+    /**
+    * Create a new user from the new-user form, assign a template/rights, add it to the global users list and update the UI.
+    * @example
+    * umCreateUserWithRights()
+    * undefined
+    * @returns {{void}} No return value.
+    **/
     function umCreateUserWithRights() {
         var name = document.getElementById('umNewUserName').value.trim();
         var phone = document.getElementById('umNewUserPhone').value.trim();
@@ -4937,6 +5487,13 @@ function init() {
     }
 
     // --- Save user rights (edit rights mode) ---
+    /**
+    * Save the current user's rights (template and selections) and refresh the UI; does nothing if no user is being edited.
+    * @example
+    * umSaveUserRights()
+    * // undefined (updates global state and UI)
+    * @returns {void} No return value; updates umAllUsers, filter options, table, and shows status messages.
+    */
     function umSaveUserRights() {
         if (umEditingUserId === null) return;
 
@@ -4970,6 +5527,13 @@ function init() {
         umCreateUserBtn.addEventListener('click', function () { umOpenCreatePanel(); });
     }
 
+    /**
+    * Open and initialize the "Create User" panel: reset editing state, clear input fields, remove error classes, reset assign choices and wizard, show the form screen, and open the overlay.
+    * @example
+    * umOpenCreatePanel()
+    * // opens the create-user overlay and prepares the form for a new user
+    * @returns {void} No return value; UI state is updated and the create overlay is opened.
+    */
     function umOpenCreatePanel() {
         umEditingUserId = null;
         umWantAssignRights = false;
@@ -4989,6 +5553,14 @@ function init() {
         umCreateOverlay.classList.add('open');
     }
 
+    /**
+    * Open the user edit panel and populate the form with the specified user's data.
+    * @example
+    * umOpenEditPanel(123)
+    * undefined
+    * @param {number|string} userId - ID of the user to load into the edit form.
+    * @returns {void} No return value.
+    **/
     function umOpenEditPanel(userId) {
         var user = null;
         for (var i = 0; i < umAllUsers.length; i++) {
@@ -5009,6 +5581,13 @@ function init() {
         umCreateOverlay.classList.add('open');
     }
 
+    /**
+    * Close the "Create" panel UI, remove the overlay, reset editing state flags and UI choices.
+    * @example
+    * umCloseCreatePanel()
+    * undefined
+    * @returns {void} No return value.
+    */
     function umCloseCreatePanel() {
         umCreateOverlay.classList.remove('open');
         umEditingUserId = null;
@@ -5082,6 +5661,14 @@ function init() {
     }
 
     // --- Toast ---
+    /**
+    * Display a temporary toast notification with the provided message.
+    * @example
+    * umShowToast('Saved successfully')
+    * undefined
+    * @param {string} msg - The message text to display inside the toast.
+    * @returns {void} Does not return a value.
+    **/
     function umShowToast(msg) {
         // Remove existing toast
         var old = document.querySelector('.um-toast');
@@ -5148,6 +5735,14 @@ function init() {
         return null;
     }
 
+    /**
+    * Open the user rights assignment slide-in panel in edit mode for the specified user.
+    * @example
+    * umOpenAssignRights('user123')
+    * undefined
+    * @param {{string|number}} {{userId}} - The identifier of the user whose rights should be edited.
+    * @returns {{void}} Does not return a value; opens the rights editor panel or no-ops if the user is not found.
+    **/
     function umOpenAssignRights(userId) {
         var user = umFindUser(userId);
         if (!user) return;
